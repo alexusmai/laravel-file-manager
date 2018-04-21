@@ -1,0 +1,37 @@
+{
+    "name": "alexusmai/laravel-file-manager",
+    "description": "File manager for Laravel",
+    "keywords": [
+        "laravel 5",
+        "file",
+        "manager"
+    ],
+    "authors": [
+        {
+            "name": "Aleksandr Manekin",
+            "email": "alexusmai@gmail.com",
+            "role": "Developer"
+        }
+    ],
+    "homepage": "https://github.com/alexusami/laravel-file-manager",
+    "license": "MIT",
+    "minimum-stability": "dev",
+    "require": {
+        "php": ">=5.6.4",
+        "illuminate/support": "^5.4",
+        "intervention/image": "^2.4",
+        "intervention/imagecache": "^2.3"
+    },
+    "autoload": {
+        "psr-4": {
+            "Alexusmai\\LaravelFileManager\\": "src"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Alexusmai\\LaravelFileManager\\FileManagerServiceProvider"
+            ]
+        }
+    }
+}
