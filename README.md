@@ -76,7 +76,7 @@ Add file manager styles
 
 - add file manager js
 ```html
-<script src="{{ asset('vendor/file-manager/css/file-manager.js') }}"></script>
+<script src="{{ asset('vendor/file-manager/js/file-manager.js') }}"></script>
 ```
 
 - add div for application (set application height!)
