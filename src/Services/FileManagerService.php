@@ -331,12 +331,12 @@ class FileManagerService
         }
 
         // create thumbnail
-        if (config('fileManager.cache')) {
+        if (config('file-manager.cache')) {
             $thumbnail = Image::cache(function($image) use ($disk, $path){
                 $image->make(
                     Storage::disk($disk)->get($path)
                 )->fit(80);
-            }, config('fileManager.cache'));
+            }, config('file-manager.cache'));
 
             // output
             return response()->make(

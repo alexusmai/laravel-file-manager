@@ -87,3 +87,22 @@ Add file manager styles
 ```
 
 ## WYSIWYG Editor Integration
+
+### CKEditor 4
+
+- add to ckeditor config
+
+```js
+CKEDITOR.replace('editor-id', {filebrowserImageBrowseUrl: '/file-manager/ckeditor'});
+```
+OR in to the config.js
+
+```js
+CKEDITOR.editorConfig = function( config ) {
+  
+  //...
+  
+  // Upload image
+  config.filebrowserImageBrowseUrl = '/file-manager/ckeditor';
+};
+```
