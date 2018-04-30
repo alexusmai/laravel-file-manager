@@ -8,6 +8,8 @@
 
 ![Laravel File Manager](https://raw.github.com/alexusmai/vue-laravel-file-manager/master/src/assets/laravel-file-manager.gif?raw=true)
 
+**Demo** [Laravel File Manager](http://file-manager.webmai.ru/)
+
 ## Installation
 
 Composer
