@@ -6,34 +6,34 @@ Route::group([
     'namespace'     => 'Alexusmai\LaravelFileManager\Controllers'
 ], function (){
 
-    Route::get('initialize', 'FileManagerController@initialize');
+    Route::get('initialize', 'FileManagerController@initialize')->name('fm.initialize');
 
-    Route::get('content', 'FileManagerController@content');
+    Route::get('content', 'FileManagerController@content')->name('fm.content');
 
-    Route::get('tree', 'FileManagerController@tree');
+    Route::get('tree', 'FileManagerController@tree')->name('fm.tree');
 
-    Route::get('select-disk', 'FileManagerController@selectDisk');
+    Route::get('select-disk', 'FileManagerController@selectDisk')->name('fm.selectDisk');
 
-    Route::post('create-directory', 'FileManagerController@createDirectory');
+    Route::post('create-directory', 'FileManagerController@createDirectory')->name('fm.createDirectory');
 
-    Route::post('upload', 'FileManagerController@upload');
+    Route::post('upload', 'FileManagerController@upload')->name('fm.upload');
 
-    Route::post('delete', 'FileManagerController@delete');
+    Route::post('delete', 'FileManagerController@delete')->name('fm.delete');
 
-    Route::post('paste', 'FileManagerController@paste');
+    Route::post('paste', 'FileManagerController@paste')->name('fm.paste');
 
-    Route::post('rename', 'FileManagerController@rename');
+    Route::post('rename', 'FileManagerController@rename')->name('fm.rename');
 
-    Route::get('download', 'FileManagerController@download');
+    Route::get('download', 'FileManagerController@download')->name('fm.download');
 
-    Route::get('properties', 'FileManagerController@properties');
+    Route::get('properties', 'FileManagerController@properties')->name('fm.properties');
 
-    Route::get('thumbnails', 'FileManagerController@thumbnails');
+    Route::get('thumbnails', 'FileManagerController@thumbnails')->name('fm.thumbnails');
 
-    Route::get('preview', 'FileManagerController@preview');
+    Route::get('preview', 'FileManagerController@preview')->name('fm.preview');
 
-    Route::get('url', 'FileManagerController@url');
+    Route::get('url', 'FileManagerController@url')->name('fm.url');
 
     // Integration with editors
-    Route::get('ckeditor', 'FileManagerController@ckeditor');
+    Route::get('ckeditor', 'FileManagerController@ckeditor')->name('fm.ckeditor');
 });
