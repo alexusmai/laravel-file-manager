@@ -10,8 +10,13 @@
     ```php
     Alexusmai\LaravelFileManager\FileManagerServiceProvider::class,
     ```
+3. Publish configuration file
 
-3. You can install npm package directly and use it in your vue application - more information about it -
+    ```bash
+    php artisan vendor:publish --tag=fm-config
+    ```
+
+4. You can install npm package directly and use it in your vue application - more information about it -
    [vue-laravel-file-manager](https://github.com/alexusmai/vue-laravel-file-manager)
    
    OR
@@ -22,7 +27,7 @@
    php artisan vendor:publish --tag=fm-assets
    ```
     
-4. Open the view file where you want to place the application block, and add:
+5. Open the view file where you want to place the application block, and add:
   
     * add a csrf token to head block if you did not do it before
     
