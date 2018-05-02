@@ -24,40 +24,40 @@
     
 4. Open the view file where you want to place the application block, and add:
   
-  * add a csrf token to head block if you did not do it before
-  
-    ```html
-    <!-- CSRF Token -->
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    ```
-  
-  * the frontend package uses **Bootstrap 4** and **Font Awesome 5** styles, if you already use it, then you do not need to connect any styles.
-   Otherwise add -
-   
-    ```html
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.10/css/all.css">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css">
-    ```
-  
-  * add file manager styles
-  
-    ```html
-    <link rel="stylesheet" href="{{ asset('vendor/file-manager/css/file-manager.css') }}">
-    ```
-  
-  * add file manager js
-  
-    ```html
-    <script src="{{ asset('vendor/file-manager/js/file-manager.js') }}"></script>
-    ```
-  
-  * add div for application (set application height!)
-  
-    ```html
-    <div style="height: 600px;">
-        <div id="fm"></div>
-    </div>
-    ```
+    * add a csrf token to head block if you did not do it before
+    
+      ```html
+      <!-- CSRF Token -->
+      <meta name="csrf-token" content="{{ csrf_token() }}">
+      ```
+    
+    * the frontend package uses **Bootstrap 4** and **Font Awesome 5** styles, if you already use it, then you do not need to connect any styles.
+     Otherwise add -
+     
+      ```html
+      <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.10/css/all.css">
+      <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css">
+      ```
+    
+    * add file manager styles
+    
+      ```html
+      <link rel="stylesheet" href="{{ asset('vendor/file-manager/css/file-manager.css') }}">
+      ```
+    
+    * add file manager js
+    
+      ```html
+      <script src="{{ asset('vendor/file-manager/js/file-manager.js') }}"></script>
+      ```
+    
+    * add div for application (set application height!)
+    
+      ```html
+      <div style="height: 600px;">
+          <div id="fm"></div>
+      </div>
+      ```
 
 ## What's next
 

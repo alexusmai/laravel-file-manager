@@ -6,7 +6,7 @@ Open configuration file - config/file-manager.php
 - set cache
 - select file manager windows configuration
 
-**Be sure to add your middleware to restrict access to the application!!!**
+**!!! Be sure to add your middleware to restrict access to the application !!!**
 
 ## What's next
 

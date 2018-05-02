@@ -1,4 +1,4 @@
-# Laravel File Manager - Backend
+# Laravel File Manager
 
 [![Latest Stable Version](https://poser.pugx.org/alexusmai/laravel-file-manager/v/stable)](https://packagist.org/packages/alexusmai/laravel-file-manager)
 [![Total Downloads](https://poser.pugx.org/alexusmai/laravel-file-manager/downloads)](https://packagist.org/packages/alexusmai/laravel-file-manager)
@@ -20,13 +20,13 @@
 
 ## Features
 
-* Frontend on Vue.js
+* Frontend on Vue.js - [vue-laravel-file-manager](https://github.com/alexusmai/vue-laravel-file-manager)
 * Work with the file system is organized by the standard means Laravel Flysystem:
   * Local, FTP, S3, Dropbox ...
   * The ability to work only with the selected disks
 * Several options for displaying the file manager:
   * One-panel view
-  * One panel + Directory tree
+  * One-panel + Directory tree
   * Two-panel
 * The minimum required set of operations:
    * Creating folders
@@ -35,7 +35,7 @@
    * Uploading files (multi-upload)
    * Downloading files
    * Two modes of displaying elements - table and grid
-   * Preview for image
+   * Preview for images
    * Viewing images
    * Full screen mode
 * Integration with WYSIWYG Editors:
