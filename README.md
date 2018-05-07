@@ -10,6 +10,8 @@
 
 **DEMO:** [Laravel File Manager](http://file-manager.webmai.ru/)
 
+**Vue.js Frontend:** [alexusmai/vue-laravel-file-manager](https://github.com/alexusmai/vue-laravel-file-manager)
+
 ## Documentation
 
 [Laravel File Manager Docs](./docs/index.md)
