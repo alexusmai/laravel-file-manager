@@ -42,4 +42,4 @@
    * Full screen mode
 * Integration with WYSIWYG Editors:
   * CKEditor 4
-* Supported locales : ru, en
+* Supported locales : ru, en, ar ([D34DlyM4N](https://github.com/D34DlyM4N))
