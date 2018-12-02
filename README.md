@@ -31,6 +31,7 @@
   * One-panel + Directory tree
   * Two-panel
 * The minimum required set of operations:
+   * Creating files
    * Creating folders
    * Copying / Cutting Folders and Files
    * Renaming
@@ -40,6 +41,17 @@
    * Preview for images
    * Viewing images
    * Full screen mode
+* More operations (v.2):
+   * Audio player (mp3, ogg, wav, aac), Video player (webm, mp4) - ([Plyr](https://github.com/sampotts/plyr))
+   * Code editor - ([Code Mirror](https://github.com/codemirror/codemirror))
+   * Image cropper - ([Cropper.js](https://github.com/fengyuanchen/cropperjs))
+   * Zip / Unzip - only for local disks
 * Integration with WYSIWYG Editors:
   * CKEditor 4
-* Supported locales : ru, en, ar ([D34DlyM4N](https://github.com/D34DlyM4N))
+* Supported locales : ru, en, ar
+
+## Thanks
+
+* Khalid Bj [D34DlyM4N](https://github.com/D34DlyM4N)
+
+

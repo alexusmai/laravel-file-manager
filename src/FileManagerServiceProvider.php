@@ -2,6 +2,7 @@
 
 namespace Alexusmai\LaravelFileManager;
 
+use Alexusmai\LaravelFileManager\Requests\TempRequest;
 use Illuminate\Support\ServiceProvider;
 
 class FileManagerServiceProvider extends ServiceProvider
