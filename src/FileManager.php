@@ -39,9 +39,11 @@ class FileManager
 
         // disk list
         foreach (config('file-manager.diskList') as $disk) {
-            $config['disks'][$disk] = array_only(
-                config('filesystems.disks')[$disk], ['driver']
-            );
+            if (array_key_exists($disk, config('filesystems.disks'))) {
+                $config['disks'][$disk] = array_only(
+                    config('filesystems.disks')[$disk], ['driver']
+                );
+            }
         }
 
         // get language
