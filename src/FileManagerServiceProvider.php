@@ -2,7 +2,6 @@
 
 namespace Alexusmai\LaravelFileManager;
 
-use Alexusmai\LaravelFileManager\Requests\TempRequest;
 use Illuminate\Support\ServiceProvider;
 
 class FileManagerServiceProvider extends ServiceProvider
@@ -49,8 +48,5 @@ class FileManagerServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function register()
-    {
-
-    }
+    public function register(){}
 }
