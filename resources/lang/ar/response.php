@@ -3,18 +3,18 @@
 return [
     'noConfig'     => 'الاعدادت غير متوفرة!',
     'notFound'     => 'غير متوفر!',
-    'diskNotFound' => 'Disk not found!',
-    'pathNotFound' => 'Path not found!',
+    'diskNotFound' => 'القرص غير موجود!',
+    'pathNotFound' => 'مسار غير موجود!',
     'diskSelected' => 'تم اختيار القرص!',
     // files
-    'fileExist'    => 'File already exists!',
-    'fileCreated'  => 'File created!',
-    'fileUpdated'  => 'File updated!',
+    'fileExist'    => 'الملف موجود بالفعل!',
+    'fileCreated'  => 'تم إنشاء الملف!',
+    'fileUpdated'  => 'تم تحديث الملف!',
     'fileNotFound' => 'الملف غير موجود!',
     // directories
     'dirExist'     => 'المجلد موجود بالفعل!',
     'dirCreated'   => 'تم أنشاء المجلد!',
-    'dirNotFound'  => 'Directory not found',
+    'dirNotFound'  => 'المجلد غير موجود',
     // actions
     'uploaded'     => 'تم تحديث كل الملفات!',
     'delNotFound'  => 'بعض الملفات غير موجودة! تحديث!',
@@ -22,5 +22,5 @@ return [
     'renamed'      => 'أعيدت تسميتها!',
     'copied'       => 'تم النسخ بنجاح!',
     // zip
-    'zipError'     => 'Error creating archive!',
+    'zipError'     => 'خطأ في إنشاء الأرشيف!',
 ];
