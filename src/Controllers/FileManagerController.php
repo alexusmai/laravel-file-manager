@@ -326,8 +326,38 @@ class FileManagerController extends Controller
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
      */
-    public function ckeditor(Request $request)
+    public function ckeditor()
     {
         return view('file-manager::ckeditor');
+    }
+
+    /**
+     * Integration with TinyMCE v4
+     *
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function tinymce()
+    {
+        return view('file-manager::tinymce');
+    }
+
+    /**
+     * Integration with SummerNote
+     *
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function summernote()
+    {
+        return view('file-manager::summernote');
+    }
+
+    /**
+     * Simple integration with input field
+     *
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function fmButton()
+    {
+        return view('file-manager::fmButton');
     }
 }

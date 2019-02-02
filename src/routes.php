@@ -46,4 +46,7 @@ Route::group([
 
     // Integration with editors
     Route::get('ckeditor', 'FileManagerController@ckeditor');
+    Route::get('tinymce', 'FileManagerController@tinymce');
+    Route::get('summernote', 'FileManagerController@summernote');
+    Route::get('fm-button', 'FileManagerController@fmButton');
 });

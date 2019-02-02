@@ -13,8 +13,8 @@
 * [Customization](./customization.md)
 
 ## Requirements
- * PHP >= 5.6.4
- * Laravel 5.4 or higher
+ * PHP >= 7.0.0
+ * Laravel 5.5 or higher
  * GD Library or Imagick for [intervention/image](https://github.com/Intervention/image)
  * requires [intervention/image](https://github.com/Intervention/image) and [intervention/imagecache](https://github.com/Intervention/imagecache)
  * Bootstrap 4 and Font Awesome 5
