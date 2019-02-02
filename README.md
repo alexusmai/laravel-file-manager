@@ -48,6 +48,9 @@
    * Zip / Unzip - only for local disks
 * Integration with WYSIWYG Editors:
   * CKEditor 4
+  * TinyMCE 4
+  * SummerNote
+  * Standalone button
 * Supported locales : ru, en, ar
 
 ## Thanks

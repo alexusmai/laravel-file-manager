@@ -17,7 +17,7 @@
 <body>
 <div class="container-fluid">
     <div class="row">
-        <div class="col-md-12" style="height: 800px;">
+        <div class="col-md-12" id="fm-main-block">
             <div id="fm"></div>
         </div>
     </div>
@@ -27,20 +27,24 @@
 <script src="{{ asset('vendor/file-manager/js/file-manager.js') }}"></script>
 <script>
   document.addEventListener('DOMContentLoaded', function() {
-    // Helper function to get parameters from the query string.
-    function getUrlParam(paramName) {
-      const reParam = new RegExp('(?:[\?&]|&)' + paramName + '=([^&]+)', 'i');
-      const match = window.location.search.match(reParam);
+    // set fm height
+    document.getElementById('fm-main-block').setAttribute('style', 'height:' + window.innerHeight + 'px');
 
-      return (match && match.length > 1) ? match[1] : null;
-    }
+    const FileBrowserDialogue = {
+      init: function() {
+        // Here goes your code for setting your custom things onLoad.
+      },
+      mySubmit: function (URL) {
+        // pass selected file path to TinyMCE
+        parent.tinymce.activeEditor.windowManager.getParams().setUrl(URL);
+        // close popup window
+        parent.tinymce.activeEditor.windowManager.close();
+      }
+    };
 
     // Add callback to file manager
     fm.$store.commit('fm/setFileCallBack', function(fileUrl) {
-      const funcNum = getUrlParam('CKEditorFuncNum');
-
-      window.opener.CKEDITOR.tools.callFunction(funcNum, fileUrl);
-      window.close();
+      FileBrowserDialogue.mySubmit(fileUrl);
     });
   });
 </script>

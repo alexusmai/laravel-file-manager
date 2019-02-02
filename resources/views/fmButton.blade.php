@@ -27,19 +27,9 @@
 <script src="{{ asset('vendor/file-manager/js/file-manager.js') }}"></script>
 <script>
   document.addEventListener('DOMContentLoaded', function() {
-    // Helper function to get parameters from the query string.
-    function getUrlParam(paramName) {
-      const reParam = new RegExp('(?:[\?&]|&)' + paramName + '=([^&]+)', 'i');
-      const match = window.location.search.match(reParam);
-
-      return (match && match.length > 1) ? match[1] : null;
-    }
-
     // Add callback to file manager
     fm.$store.commit('fm/setFileCallBack', function(fileUrl) {
-      const funcNum = getUrlParam('CKEditorFuncNum');
-
-      window.opener.CKEDITOR.tools.callFunction(funcNum, fileUrl);
+      window.opener.fmSetLink(fileUrl);
       window.close();
     });
   });
