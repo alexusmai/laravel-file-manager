@@ -10,7 +10,7 @@
 * [Installation](./installation.md)
 * [Configuration](./configuration.md)
 * [Integration](./integration.md)
-* [Customization](./customization.md)
+* [ACL](./acl.md)
 
 ## Requirements
  * PHP >= 7.0.0

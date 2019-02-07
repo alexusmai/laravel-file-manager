@@ -23,4 +23,6 @@ return [
     'copied'       => 'Copied successfully!',
     // zip
     'zipError'     => 'Error creating archive!',
+    // acl
+    'aclError'     => 'Access denied!',
 ];

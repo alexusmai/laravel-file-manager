@@ -18,7 +18,7 @@
 * [Installation](./docs/installation.md)
 * [Configuration](./docs/configuration.md)
 * [Integration](./docs/integration.md)
-* [Customization](./docs/customization.md)
+* [ACL](./docs/acl.md)
 
 ## Features
 
@@ -51,6 +51,13 @@
   * TinyMCE 4
   * SummerNote
   * Standalone button
+* ACL - access control list
+  * delimiting access to files and folders
+  * two work strategies:
+    * Positive - Allow everything that is not forbidden by the ACL rules list
+    * Negative - Deny anything, that not allowed by the ACL rules list
+  * You can use different repositories for the rules - an array (configuration file), a database (there is an example implementation), or you can add your own.
+  * You can hide files and folders that are not accessible.
 * Supported locales : ru, en, ar
 
 ## Thanks
