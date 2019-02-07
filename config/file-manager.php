@@ -35,10 +35,79 @@ return [
      */
     'windowsConfig' => 2,
 
-    /**
+    /***************************************************************************
      * Middleware
      * Add your middleware name to array -> ['web', 'auth', 'admin']
      * !!!! RESTRICT ACCESS FOR NON ADMIN USERS !!!!
+     *
+     * !!! For using ACL - add 'fm-acl' to array !!! ['web', 'fm-acl']
      */
-    'middleware'    => ['web', 'auth']
+    'middleware' => ['web'],
+
+    /***************************************************************************
+     * ACL mechanism ON/OFF
+     *
+     * default - false(OFF)
+     */
+    'acl' => false,
+
+    /**
+     * Hide files and folders from file-manager if user doesn't have access
+     * ACL access level = 0
+     */
+    'aclHideFromFM' => true,
+
+    /**
+     * ACL strategy
+     *
+     * positive - Allow everything that is not forbidden by the ACL rules list
+     * positive access - 2 (r/w)
+     *
+     * negative - Deny anything, that not allowed by the ACL rules list
+     * negative access - 0 (deny)
+     */
+    'aclStrategy'   => 'positive',
+
+    /**
+     * ACL rules repository
+     *
+     * default - config file(ConfigACLRepository)
+     */
+    'aclRepository' => Alexusmai\LaravelFileManager\ACLService\ConfigACLRepository::class,
+    //'aclRepository' => Alexusmai\LaravelFileManager\ACLService\DBACLRepository::class,
+
+    /**
+     * ACL rules list - used for default repository
+     *
+     * 1 it's user ID
+     * null - for not authenticated user
+     *
+     * 'disk' => 'disk-name'
+     *
+     * 'path' => 'folder-name'
+     * 'path' => 'folder1*' - select folder1, folder12, folder1/sub-folder, ...
+     * 'path' => 'folder2/*' - select folder2/sub-folder,... but not select folder2 !!!
+     * 'path' => 'folder-name/file-name.jpg'
+     * 'path' => 'folder-name/*.jpg'
+     *
+     * * - wildcard
+     *
+     * access: 0 - deny, 1 - read, 2 - read/write
+     */
+    'aclRules'      => [
+        null => [
+            //['disk' => 'public', 'path' => '/', 'access' => 2],
+        ],
+        1 => [
+            //['disk' => 'public', 'path' => 'images/arch*.jpg', 'access' => 2],
+            //['disk' => 'public', 'path' => 'files/*', 'access' => 1],
+        ],
+    ],
+
+    /**
+     * ACL Rules cache
+     *
+     * null or value in minutes
+     */
+    'aclRulesCache' => null,
 ];

@@ -1,6 +1,6 @@
 ## Integration
 
-> See examples in /examples folder
+> See examples in [examples](./../examples) folder
 
 ### CKEditor 4
 
@@ -89,7 +89,7 @@ function fmSetLink(url) {
 }
 ```
 
-See example - /examples/summernote.blade.php
+See [example](./../examples/wysiwyg/summernote.blade.php)
 
 ### Standalone button
 

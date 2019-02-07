@@ -2,7 +2,7 @@
 
 namespace Alexusmai\LaravelFileManager\Traits;
 
-use Illuminate\Support\Collection;
+use Alexusmai\LaravelFileManager\ACLService\ACL;
 use Storage;
 
 trait ContentTrait
@@ -21,10 +21,10 @@ trait ContentTrait
         $content = Storage::disk($disk)->listContents($path);
 
         // get a list of directories
-        $directories = $this->filterDir($content);
+        $directories = $this->filterDir($disk, $content);
 
         // get a list of files
-        $files = $this->filterFile($content);
+        $files = $this->filterFile($disk, $content);
 
         return compact('directories', 'files');
     }
@@ -41,7 +41,7 @@ trait ContentTrait
     {
         $content = Storage::disk($disk)->listContents($path);
 
-        return $this->filterDir($content);
+        return $this->filterDir($disk, $content);
     }
 
     /**
@@ -56,7 +56,7 @@ trait ContentTrait
     {
         $content = Storage::disk($disk)->listContents($path);
 
-        return $this->filterFile($content);
+        return $this->filterFile($disk, $content);
     }
 
     /**
@@ -102,6 +102,11 @@ trait ContentTrait
             ? $pathInfo['extension'] : '';
         $file['filename'] = $pathInfo['filename'];
 
+        // if ACL ON
+        if (config('file-manager.acl')) {
+            return $this->aclFilter($disk, [$file])[0];
+        }
+
         return $file;
     }
 
@@ -123,6 +128,11 @@ trait ContentTrait
         $directory['dirname'] = $pathInfo['dirname'] === '.' ? ''
             : $pathInfo['dirname'];
 
+        // if ACL ON
+        if (config('file-manager.acl')) {
+            return $this->aclFilter($disk, [$directory])[0];
+        }
+
         return $directory;
     }
 
@@ -133,29 +143,75 @@ trait ContentTrait
      *
      * @return array
      */
-    protected function filterDir($content)
+    protected function filterDir($disk, $content)
     {
-        return Collection::make($content)
-            ->where('type', 'dir')
-            ->map(function ($item, $key) {
-                return array_except($item, ['filename']);
-            })
-            ->values()
-            ->all();
+        // select only dir
+        $dirsList = array_where($content, function ($item) {
+            return $item['type'] === 'dir';
+        });
+
+        // remove 'filename' param
+        $dirs = array_map(function ($item) {
+            return array_except($item, ['filename']);
+        }, $dirsList);
+
+        // if ACL ON
+        if (config('file-manager.acl')) {
+            return array_values($this->aclFilter($disk, $dirs));
+        }
+
+        return array_values($dirs);
     }
 
     /**
      * Get only files
      *
+     * @param $disk
      * @param $content
      *
      * @return array
      */
-    protected function filterFile($content)
+    protected function filterFile($disk, $content)
     {
-        return Collection::make($content)
-            ->where('type', 'file')
-            ->values()
-            ->all();
+        // select only files
+        $files = array_where($content, function ($item) {
+            return $item['type'] === 'file';
+        });
+
+        // if ACL ON
+        if (config('file-manager.acl')) {
+            return array_values($this->aclFilter($disk, $files));
+        }
+
+        return array_values($files);
+    }
+
+    /**
+     * ACL filter
+     *
+     * @param $disk
+     * @param $content
+     *
+     * @return mixed
+     */
+    protected function aclFilter($disk, $content)
+    {
+        $acl = resolve(ACL::class);
+
+        $withAccess = array_map(function ($item) use ($acl, $disk) {
+            // add acl access level
+            $item['acl'] = $acl->getAccessLevel($disk, $item['path']);
+
+            return $item;
+        }, $content);
+
+        // filter files and folders
+        if (config('file-manager.aclHideFromFM')) {
+            return array_filter($withAccess, function ($item) {
+                return $item['acl'] !== 0;
+            });
+        }
+
+        return $withAccess;
     }
 }
