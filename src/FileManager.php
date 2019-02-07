@@ -32,6 +32,7 @@ class FileManager
         }
 
         $config = array_only(config('file-manager'), [
+            'acl',
             'leftDisk',
             'rightDisk',
             'windowsConfig',

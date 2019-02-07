@@ -10,4 +10,6 @@ Open configuration file - config/file-manager.php
 
 ## What's next
 
+[ACL](./acl.md)
+
 [Integration](./integration.md)
