@@ -60,13 +60,11 @@ return [
     /**
      * ACL strategy
      *
-     * positive - Allow everything that is not forbidden by the ACL rules list
-     * positive access - 2 (r/w)
+     * blacklist - Allow everything(access - 2 - r/w) that is not forbidden by the ACL rules list
      *
-     * negative - Deny anything, that not allowed by the ACL rules list
-     * negative access - 0 (deny)
+     * whitelist - Deny anything(access - 0 - deny), that not allowed by the ACL rules list
      */
-    'aclStrategy'   => 'positive',
+    'aclStrategy'   => 'blacklist',
 
     /**
      * ACL rules repository

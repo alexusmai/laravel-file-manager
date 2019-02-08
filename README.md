@@ -54,8 +54,8 @@
 * ACL - access control list
   * delimiting access to files and folders
   * two work strategies:
-    * Positive - Allow everything that is not forbidden by the ACL rules list
-    * Negative - Deny anything, that not allowed by the ACL rules list
+    * blacklist - Allow everything that is not forbidden by the ACL rules list
+    * whitelist - Deny everything, that not allowed by the ACL rules list
   * You can use different repositories for the rules - an array (configuration file), a database (there is an example implementation), or you can add your own.
   * You can hide files and folders that are not accessible.
 * Supported locales : ru, en, ar
