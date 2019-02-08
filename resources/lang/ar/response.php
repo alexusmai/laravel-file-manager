@@ -24,5 +24,5 @@ return [
     // zip
     'zipError'     => 'خطأ في إنشاء الأرشيف!',
     // acl
-    'aclError'     => 'Access denied!',
+    'aclError'     => 'تم الرفض!',
 ];
