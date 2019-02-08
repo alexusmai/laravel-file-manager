@@ -44,7 +44,7 @@ class ACL
         }
 
         // positive or negative ACL strategy
-        return config('file-manager.aclStrategy') === 'positive' ? 2 : 0;
+        return config('file-manager.aclStrategy') === 'blacklist' ? 2 : 0;
     }
 
     /**
