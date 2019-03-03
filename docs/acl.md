@@ -1,4 +1,4 @@
-## ACL
+# ACL
 
 You can use the access control system to differentiate access to files and folders for different users.
 For this you need to make the following settings.
@@ -40,7 +40,7 @@ Open configuration file - config/file-manager.php
     *
     * default - config file(ConfigACLRepository)
     */
-   'aclRepository' => \Alexusmai\LaravelFileManager\ACLService\ConfigACLRepository::class,
+   'aclRepository' => \Alexusmai\LaravelFileManager\Services\ACLService\ConfigACLRepository::class,
    ```
    
    Now you can add your rules in 'aclRules' array. But if you want to store your rules in another place, such as a database, you need to create your own class, and implements two functions from ACLRepository.
@@ -51,7 +51,7 @@ Open configuration file - config/file-manager.php
     php artisan vendor:publish --tag=fm-migrations
     ```
    
-   See [/src/ACLService/DBACLRepository.php](./../src/ACLService/DBACLRepository.php) and [/migrations/2019_02_06_174631_make_acl_rules_table.php](./../migrations/2019_02_06_174631_make_acl_rules_table.php)
+   See [/src/Services/ACLService/DBACLRepository.php](../src/Services/ACLService/DBACLRepository.php) and [/migrations/2019_02_06_174631_make_acl_rules_table.php](./../migrations/2019_02_06_174631_make_acl_rules_table.php)
    
 ## Example 1
 
@@ -63,7 +63,7 @@ I have disk 'images' in /config/filesystems.php for folder /public/images
         'images' => [
             'driver' => 'local',
             'root'   => public_path('images'),
-            'url'    => '/images/',
+            'url'    => env('APP_URL').'/images/',
         ],
 ]
 ```
@@ -117,7 +117,7 @@ I add this disk to file-manager config file
 
 namespace App\Http;
 
-use Alexusmai\LaravelFileManager\ACLService\ACLRepository;
+use Alexusmai\LaravelFileManager\Services\ACLService\ACLRepository;
 
 class UsersACLRepository implements ACLRepository
 {
@@ -181,3 +181,8 @@ class UsersACLRepository implements ACLRepository
      */
     'aclRepository' => \App\Http\UsersACLRepository::class,
 ```
+
+
+## What's next
+
+[Events](./events.md)

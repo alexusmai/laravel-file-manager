@@ -71,8 +71,8 @@ return [
      *
      * default - config file(ConfigACLRepository)
      */
-    'aclRepository' => Alexusmai\LaravelFileManager\ACLService\ConfigACLRepository::class,
-    //'aclRepository' => Alexusmai\LaravelFileManager\ACLService\DBACLRepository::class,
+    'aclRepository' => Alexusmai\LaravelFileManager\Services\ACLService\ConfigACLRepository::class,
+    //'aclRepository' => Alexusmai\LaravelFileManager\Services\ACLService\DBACLRepository::class,
 
     /**
      * ACL rules list - used for default repository

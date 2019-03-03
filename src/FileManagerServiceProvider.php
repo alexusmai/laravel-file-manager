@@ -64,7 +64,7 @@ class FileManagerServiceProvider extends ServiceProvider
     {
         // ACL Repository
         $this->app->bind(
-            'Alexusmai\LaravelFileManager\ACLService\ACLRepository',
+            'Alexusmai\LaravelFileManager\Services\ACLService\ACLRepository',
             $this->app['config']['file-manager.aclRepository']
         );
 

@@ -2,10 +2,11 @@
 
 namespace Alexusmai\LaravelFileManager;
 
+use Alexusmai\LaravelFileManager\Events\Deleted;
 use Alexusmai\LaravelFileManager\Traits\CheckTrait;
 use Alexusmai\LaravelFileManager\Traits\ContentTrait;
 use Alexusmai\LaravelFileManager\Traits\PathTrait;
-use Alexusmai\LaravelFileManager\TransferService\TransferFactory;
+use Alexusmai\LaravelFileManager\Services\TransferService\TransferFactory;
 use Illuminate\Support\Str;
 use Storage;
 use Image;
@@ -150,6 +151,8 @@ class FileManager
      */
     public function delete($disk, $items)
     {
+        $deletedItems = [];
+
         foreach ($items as $item) {
             // check all files and folders - exists or no
             if (!Storage::disk($disk)->exists($item['path'])) {
@@ -163,7 +166,12 @@ class FileManager
                     Storage::disk($disk)->delete($item['path']);
                 }
             }
+
+            // add deleted item
+            $deletedItems[] = $item;
         }
+
+        event(new Deleted($disk, $deletedItems));
 
         return [
             'result' => [
