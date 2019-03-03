@@ -1,4 +1,4 @@
-## Configuration
+# Configuration
 
 Open configuration file - config/file-manager.php
 

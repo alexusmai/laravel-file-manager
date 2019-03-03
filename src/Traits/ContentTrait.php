@@ -2,7 +2,7 @@
 
 namespace Alexusmai\LaravelFileManager\Traits;
 
-use Alexusmai\LaravelFileManager\ACLService\ACL;
+use Alexusmai\LaravelFileManager\Services\ACLService\ACL;
 use Storage;
 
 trait ContentTrait

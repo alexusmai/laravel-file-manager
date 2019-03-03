@@ -19,6 +19,7 @@
 * [Configuration](./docs/configuration.md)
 * [Integration](./docs/integration.md)
 * [ACL](./docs/acl.md)
+* [Events](./docs/events.md)
 
 ## Features
 
@@ -58,7 +59,31 @@
     * whitelist - Deny everything, that not allowed by the ACL rules list
   * You can use different repositories for the rules - an array (configuration file), a database (there is an example implementation), or you can add your own.
   * You can hide files and folders that are not accessible.
+* Events (v2.2)
 * Supported locales : ru, en, ar
+
+## Upgrading to version 2.2
+
+If you using ACL change namespace in config file for 'aclRepository'
+
+```php
+// From
+'aclRepository' => Alexusmai\LaravelFileManager\ACLService\ConfigACLRepository::class,
+
+// To
+'aclRepository' => Alexusmai\LaravelFileManager\Services\ACLService\ConfigACLRepository::class,
+```
+
+if you create your own repository for ACL rules, don't be forget change namespace to:
+
+```php
+// From
+Alexusmai\LaravelFileManager\ACLService;
+
+// To
+Alexusmai\LaravelFileManager\Services\ACLService;
+```
+
 
 ## Thanks
 

@@ -1,4 +1,4 @@
-## Installation
+# Installation
 1. Install package - using composer
 
     ```bash

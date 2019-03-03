@@ -1,13 +1,13 @@
 <?php
 
-namespace Alexusmai\LaravelFileManager\ACLService;
+namespace Alexusmai\LaravelFileManager\Services\ACLService;
 
 /**
  * Class ConfigACLRepository
  *
  * Get rules from file-manager config file - aclRules
  *
- * @package Alexusmai\LaravelFileManager\ACLService
+ * @package Alexusmai\LaravelFileManager\Services\ACLService
  */
 class ConfigACLRepository implements ACLRepository
 {
