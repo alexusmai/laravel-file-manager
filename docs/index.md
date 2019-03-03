@@ -11,6 +11,7 @@
 * [Configuration](./configuration.md)
 * [Integration](./integration.md)
 * [ACL](./acl.md)
+* [Events](./events.md)
 
 ## Requirements
  * PHP >= 7.0.0

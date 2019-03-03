@@ -2,6 +2,18 @@
 
 namespace Alexusmai\LaravelFileManager\Controllers;
 
+use Alexusmai\LaravelFileManager\Events\Deleting;
+use Alexusmai\LaravelFileManager\Events\DirectoryCreated;
+use Alexusmai\LaravelFileManager\Events\DirectoryCreating;
+use Alexusmai\LaravelFileManager\Events\DiskSelected;
+use Alexusmai\LaravelFileManager\Events\Download;
+use Alexusmai\LaravelFileManager\Events\FileCreated;
+use Alexusmai\LaravelFileManager\Events\FileCreating;
+use Alexusmai\LaravelFileManager\Events\FilesUploaded;
+use Alexusmai\LaravelFileManager\Events\FilesUploading;
+use Alexusmai\LaravelFileManager\Events\FileUpdate;
+use Alexusmai\LaravelFileManager\Events\Paste;
+use Alexusmai\LaravelFileManager\Events\Rename;
 use Alexusmai\LaravelFileManager\Requests\RequestValidator;
 use Alexusmai\LaravelFileManager\FileManager;
 use Alexusmai\LaravelFileManager\Services\Zip;
@@ -80,6 +92,8 @@ class FileManagerController extends Controller
      */
     public function selectDisk(RequestValidator $request)
     {
+        event(new DiskSelected($request->input('disk')));
+
         return response()->json([
             'result' => [
                 'status'  => 'success',
@@ -97,14 +111,18 @@ class FileManagerController extends Controller
      */
     public function upload(RequestValidator $request)
     {
-        return response()->json(
-            $this->fm->upload(
-                $request->input('disk'),
-                $request->input('path'),
-                $request->file('files'),
-                $request->input('overwrite')
-            )
+        event(new FilesUploading($request));
+
+        $uploadResponse = $this->fm->upload(
+            $request->input('disk'),
+            $request->input('path'),
+            $request->file('files'),
+            $request->input('overwrite')
         );
+
+        event(new FilesUploaded($request));
+
+        return response()->json($uploadResponse);
     }
 
     /**
@@ -116,12 +134,14 @@ class FileManagerController extends Controller
      */
     public function delete(RequestValidator $request)
     {
-        return response()->json(
-            $this->fm->delete(
-                $request->input('disk'),
-                $request->input('items')
-            )
+        event(new Deleting($request));
+
+        $deleteResponse = $this->fm->delete(
+            $request->input('disk'),
+            $request->input('items')
         );
+
+        return response()->json($deleteResponse);
     }
 
     /**
@@ -133,6 +153,8 @@ class FileManagerController extends Controller
      */
     public function paste(RequestValidator $request)
     {
+        event(new Paste($request));
+
         return response()->json(
             $this->fm->paste(
                 $request->input('disk'),
@@ -151,6 +173,8 @@ class FileManagerController extends Controller
      */
     public function rename(RequestValidator $request)
     {
+        event(new Rename($request));
+
         return response()->json(
             $this->fm->rename(
                 $request->input('disk'),
@@ -169,6 +193,8 @@ class FileManagerController extends Controller
      */
     public function download(RequestValidator $request)
     {
+        event(new Download($request));
+
         return $this->fm->download(
             $request->input('disk'),
             $request->input('path')
@@ -233,13 +259,19 @@ class FileManagerController extends Controller
      */
     public function createDirectory(RequestValidator $request)
     {
-        return response()->json(
-            $this->fm->createDirectory(
-                $request->input('disk'),
-                $request->input('path'),
-                $request->input('name')
-            )
+        event(new DirectoryCreating($request));
+
+        $createDirectoryResponse = $this->fm->createDirectory(
+            $request->input('disk'),
+            $request->input('path'),
+            $request->input('name')
         );
+
+        if ($createDirectoryResponse['result']['status'] === 'success') {
+            event(new DirectoryCreated($request));
+        }
+
+        return response()->json($createDirectoryResponse);
     }
 
     /**
@@ -251,13 +283,19 @@ class FileManagerController extends Controller
      */
     public function createFile(RequestValidator $request)
     {
-        return response()->json(
-            $this->fm->createFile(
-                $request->input('disk'),
-                $request->input('path'),
-                $request->input('name')
-            )
+        event(new FileCreating($request));
+
+        $createFileResponse = $this->fm->createFile(
+            $request->input('disk'),
+            $request->input('path'),
+            $request->input('name')
         );
+
+        if ($createFileResponse['result']['status'] === 'success') {
+            event(new FileCreated($request));
+        }
+
+        return response()->json($createFileResponse);
     }
 
     /**
@@ -269,6 +307,8 @@ class FileManagerController extends Controller
      */
     public function updateFile(RequestValidator $request)
     {
+        event(new FileUpdate($request));
+
         return response()->json(
             $this->fm->updateFile(
                 $request->input('disk'),

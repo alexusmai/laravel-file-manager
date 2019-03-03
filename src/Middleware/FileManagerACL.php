@@ -2,7 +2,7 @@
 
 namespace Alexusmai\LaravelFileManager\Middleware;
 
-use Alexusmai\LaravelFileManager\ACLService\ACL;
+use Alexusmai\LaravelFileManager\Services\ACLService\ACL;
 use Closure;
 
 class FileManagerACL
@@ -17,6 +17,11 @@ class FileManagerACL
      */
     public function handle($request, Closure $next)
     {
+        // if ACL is OFF
+        if (!config('file-manager.acl')) {
+            return $next($request);
+        }
+
         // get disk and path name
         $disk = $request->has('disk') ? $request->input('disk') : null;
         $path = $request->has('path') ? $request->input('path') : '/';

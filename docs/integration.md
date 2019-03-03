@@ -1,4 +1,4 @@
-## Integration
+# Integration
 
 > See examples in [examples](./../examples) folder
 
