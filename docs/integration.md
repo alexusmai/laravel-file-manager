@@ -123,6 +123,67 @@ function fmSetLink($url) {
 }
 ```
 
+### Multiple standalone buttons
+
+```html
+<!-- HTML -->
+<div class="container">
+    <div class="form-row">
+        <div class="form-group col-md-6">
+            <label for="image_label">Image</label>
+            <div class="input-group">
+                <input type="text" id="image1" class="form-control" name="image"
+                       aria-label="Image" aria-describedby="button-image">
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="button" id="button-image">Select</button>
+                </div>
+            </div>
+        </div>
+        <div class="form-group col-md-6">
+            <label for="image_label">Image2</label>
+            <div class="input-group">
+                <input type="text" id="image2" class="form-control" name="image"
+                       aria-label="Image" aria-describedby="button-image">
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="button" id="button-image2">Select</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JS -->
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+
+    document.getElementById('button-image').addEventListener('click', (event) => {
+      event.preventDefault();
+
+      inputId = 'image1';
+
+      window.open('/file-manager/fm-button', 'fm', 'width=1400,height=800');
+    });
+
+    // second button
+    document.getElementById('button-image2').addEventListener('click', (event) => {
+      event.preventDefault();
+
+      inputId = 'image2';
+
+      window.open('/file-manager/fm-button', 'fm', 'width=1400,height=800');
+    });
+  });
+
+  // input
+  let inputId = '';
+
+  // set file link
+  function fmSetLink($url) {
+    document.getElementById(inputId).value = $url;
+  }
+</script>
+```
+
 ### Modifications
 
 To change standard views(with file manager), publish them.
