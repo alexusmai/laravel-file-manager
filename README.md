@@ -88,5 +88,6 @@ Alexusmai\LaravelFileManager\Services\ACLService;
 ## Thanks
 
 * Khalid Bj [D34DlyM4N](https://github.com/D34DlyM4N)
+* NeoSon [lkloon123](https://github.com/lkloon123)
 
 
