@@ -36,6 +36,8 @@ class FileManager
             'acl',
             'leftDisk',
             'rightDisk',
+            'leftPath',
+            'rightPath',
             'windowsConfig',
         ]);
 

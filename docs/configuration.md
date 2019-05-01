@@ -10,6 +10,59 @@ Open configuration file - config/file-manager.php
 
 **Don't forget to configure your php and Nginx**
 
+### You can set default disk and default path
+
+You have two variants for how to do it:
+
+1. Add this params to the config file (config/file-manager.php)
+
+```php
+/**
+ * Default disk for left manager
+ * null - auto select the first disk in the disk list
+ */
+'leftDisk'  => 'public',
+
+/**
+ * Default disk for right manager
+ * null - auto select the first disk in the disk list
+ */
+'rightDisk' => null,
+
+/**
+ * Default path for left manager
+ * null - root directory
+ */
+'leftPath'  => 'directory/sub-directory',
+
+/**
+ * Default path for right manager
+ * null - root directory
+ */
+'rightPath' => null,
+```
+
+2 Or you can add this params in URL
+
+```
+http://site.name/?leftDisk=public
+
+http://site.name/?leftDisk=public&rightDisk=images
+
+http://site.name/?leftDisk=public&leftPath=directory/sub-directory
+
+http://site.name/?leftDisk=public&leftPath=directory2&rightDisk=images&rightPath=cars/vw/golf
+// %2F - /, %20 - space
+http://site.name/?leftDisk=public&leftPath=directory2&rightDisk=images&rightPath=cars%2Fvw%2Fgolf
+```
+
+leftDisk and leftPath is default for the file manager windows configuration - 1,2
+
+**You can't add a disk that does not exist in the diskList array !**
+
+**! Params in URL have more weight than params in config file. It means that URL params can overwrite your config params. !**
+
+
 ```
 // PHP
 upload_max_filesize,
@@ -57,18 +110,6 @@ client_max_body_size
 ```php
 // You need to enter the disks you want to use in the file manager
 'diskList'  => ['images', 'public'],
-```
-
->If you want to change default disk at runtime, you can add search params to the URL:
-
-```
-// !!! The disk must be in diskList !!!
-
-// one window
-http://site-name.com/your-url?leftDisk=public
-
-// two windows
-http://site-name.com/your-url?leftDisk=public&rightDisk=images
 ```
 
 ## What's next

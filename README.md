@@ -62,26 +62,64 @@
 * Events (v2.2)
 * Supported locales : ru, en, ar
 
-## Upgrading to version 2.2
+## In new version 2.3
 
-If you using ACL change namespace in config file for 'aclRepository'
+In new version you can set default disk and default path
+
+You have two variants for how to do it:
+
+1. Add this params to the config file (config/file-manager.php)
 
 ```php
-// From
-'aclRepository' => Alexusmai\LaravelFileManager\ACLService\ConfigACLRepository::class,
+/**
+ * Default path for left manager
+ * null - root directory
+ */
+'leftPath'  => 'directory/sub-directory',
 
-// To
-'aclRepository' => Alexusmai\LaravelFileManager\Services\ACLService\ConfigACLRepository::class,
+/**
+ * Default path for right manager
+ * null - root directory
+ */
+'rightPath' => null,
 ```
 
-if you create your own repository for ACL rules, don't be forget change namespace to:
+2 Or you can add this params in URL
+
+```
+http://site.name/?leftDisk=diskName&leftPath=directory
+http://site.name/?leftDisk=diskName&leftPath=directory2&rightDisk=diskName2&rightPath=images
+```
+
+leftDisk and leftPath is default for the file manager windows configuration - 1,2
+
+
+## Upgrading to version 2.3
+
+Update pre-compiled css and js files and config file - file-manager.php 
+
 
 ```php
-// From
-Alexusmai\LaravelFileManager\ACLService;
+// config
+php artisan vendor:publish --tag=fm-config --force
+// js, css
+php artisan vendor:publish --tag=fm-assets --force
+```
 
-// To
-Alexusmai\LaravelFileManager\Services\ACLService;
+You can update the config file manually - add new params:
+
+```php
+/**
+ * Default path for left manager
+ * null - root directory
+ */
+'leftPath'  => null,
+
+/**
+ * Default path for right manager
+ * null - root directory
+ */
+'rightPath' => null,
 ```
 
 
