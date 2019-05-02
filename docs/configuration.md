@@ -10,6 +10,15 @@ Open configuration file - config/file-manager.php
 
 **Don't forget to configure your php and Nginx**
 
+```
+// PHP
+upload_max_filesize,
+post_max_size
+
+// Nginx
+client_max_body_size
+```
+
 ### You can set default disk and default path
 
 You have two variants for how to do it:
@@ -61,16 +70,6 @@ leftDisk and leftPath is default for the file manager windows configuration - 1,
 **You can't add a disk that does not exist in the diskList array !**
 
 **! Params in URL have more weight than params in config file. It means that URL params can overwrite your config params. !**
-
-
-```
-// PHP
-upload_max_filesize,
-post_max_size
-
-// Nginx
-client_max_body_size
-```
 
 ## Disk settings example
 
