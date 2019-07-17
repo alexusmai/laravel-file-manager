@@ -4,14 +4,11 @@ You can use the access control system to differentiate access to files and folde
 For this you need to make the following settings.
 Open configuration file - config/file-manager.php
 
-1. Turn ON ACL system and add fm-acl middleware
+1. Turn ON ACL system (fm-acl middleware will turn ON automatically)
 
     ```php
     // set true
     'acl' => true,
- 
-    // add acl middleware to your array
-    'middleware' => ['web', 'fm-acl'],
     ```
 
 2. You can hide files and folders to which the user does not have access(access = 0).

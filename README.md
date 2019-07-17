@@ -60,41 +60,32 @@
   * You can use different repositories for the rules - an array (configuration file), a database (there is an example implementation), or you can add your own.
   * You can hide files and folders that are not accessible.
 * Events (v2.2)
-* Supported locales : ru, en, ar
+* Thumbnails lazy load
+* Dynamic configuration (v2.4)
+* Supported locales : ru, en, ar, sr
 
-## In new version 2.3
+## In new version 2.4
 
-In new version you can set default disk and default path
+Now you can create your own config repositories, it will allow to change your configuration dynamically.
 
-You have two variants for how to do it:
+How to do it:
 
-1. Add this params to the config file (config/file-manager.php)
+Create new class - example - TestConfigRepository
 
 ```php
-/**
- * Default path for left manager
- * null - root directory
- */
-'leftPath'  => 'directory/sub-directory',
+namespace App\Http;
 
-/**
- * Default path for right manager
- * null - root directory
- */
-'rightPath' => null,
+use Alexusmai\LaravelFileManager\Services\ConfigService\ConfigRepository;
+
+class TestConfigRepository implements ConfigRepository
+{
+    // implement all methods from interface
+}
 ```
 
-2 Or you can add this params in URL
+For example see [src/Services/ConfigService/DefaultConfigRepository.php](https://github.com/alexusmai/laravel-file-manager/blob/master/src/Services/ConfigService/DefaultConfigRepository.php)
 
-```
-http://site.name/?leftDisk=diskName&leftPath=directory
-http://site.name/?leftDisk=diskName&leftPath=directory2&rightDisk=diskName2&rightPath=images
-```
-
-leftDisk and leftPath is default for the file manager windows configuration - 1,2
-
-
-## Upgrading to version 2.3
+## Upgrading to version 2.4
 
 Update pre-compiled css and js files and config file - file-manager.php 
 
@@ -106,26 +97,25 @@ php artisan vendor:publish --tag=fm-config --force
 php artisan vendor:publish --tag=fm-assets --force
 ```
 
-You can update the config file manually - add new params:
+If you use the ACL, now you don't need to add the acl middleware to configuration.
 
 ```php
-/**
- * Default path for left manager
- * null - root directory
- */
-'leftPath'  => null,
+//======= In old versions ==========
+'acl' => true,
 
-/**
- * Default path for right manager
- * null - root directory
- */
-'rightPath' => null,
+// add acl middleware to your array
+'middleware' => ['web', 'fm-acl'],
+
+//======= In a new version =========
+'acl' => true,
+
+'middleware' => ['web'],
 ```
-
 
 ## Thanks
 
 * Khalid Bj [D34DlyM4N](https://github.com/D34DlyM4N)
 * NeoSon [lkloon123](https://github.com/lkloon123)
+* Aleksandar Stevanović [aleks989](https://github.com/aleks989)
 
 

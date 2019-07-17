@@ -2,6 +2,7 @@
 
 namespace Alexusmai\LaravelFileManager\Services\ACLService;
 
+use Alexusmai\LaravelFileManager\Services\ConfigService\ConfigRepository;
 use Cache;
 
 class ACL
@@ -12,13 +13,22 @@ class ACL
     public $aclRepository;
 
     /**
+     * @var ConfigRepository
+     */
+    public $configRepository;
+
+    /**
      * ACL constructor.
      *
-     * @param ACLRepository $aclRepository
+     * @param  ACLRepository  $aclRepository
+     * @param  ConfigRepository  $configRepository
      */
-    public function __construct(ACLRepository $aclRepository)
-    {
+    public function __construct(
+        ACLRepository $aclRepository,
+        ConfigRepository $configRepository
+    ) {
         $this->aclRepository = $aclRepository;
+        $this->configRepository = $configRepository;
     }
 
     /**
@@ -44,7 +54,7 @@ class ACL
         }
 
         // positive or negative ACL strategy
-        return config('file-manager.aclStrategy') === 'blacklist' ? 2 : 0;
+        return $this->configRepository->getAclStrategy() === 'blacklist' ? 2 : 0;
     }
 
     /**
@@ -70,8 +80,8 @@ class ACL
     protected function rulesList()
     {
         // if cache on
-        if ($minutes = config('file-manager.aclRulesCache')) {
-            $cacheName = 'fm_acl_'.$this->aclRepository->getUserID();
+        if ($minutes = $this->configRepository->getAclRulesCache()) {
+            $cacheName = get_class($this->aclRepository) . '_' .$this->aclRepository->getUserID();
 
             return Cache::remember($cacheName, $minutes, function () {
                 return $this->aclRepository->getRules();

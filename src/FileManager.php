@@ -7,6 +7,7 @@ use Alexusmai\LaravelFileManager\Traits\CheckTrait;
 use Alexusmai\LaravelFileManager\Traits\ContentTrait;
 use Alexusmai\LaravelFileManager\Traits\PathTrait;
 use Alexusmai\LaravelFileManager\Services\TransferService\TransferFactory;
+use Alexusmai\LaravelFileManager\Services\ConfigService\ConfigRepository;
 use Illuminate\Support\Str;
 use Storage;
 use Image;
@@ -14,6 +15,21 @@ use Image;
 class FileManager
 {
     use PathTrait, ContentTrait, CheckTrait;
+
+    /**
+     * @var ConfigRepository
+     */
+    public $configRepository;
+
+    /**
+     * FileManager constructor.
+     *
+     * @param  ConfigRepository  $configRepository
+     */
+    public function __construct(ConfigRepository $configRepository)
+    {
+        $this->configRepository = $configRepository;
+    }
 
     /**
      * Initialize App
@@ -32,17 +48,17 @@ class FileManager
             ];
         }
 
-        $config = array_only(config('file-manager'), [
-            'acl',
-            'leftDisk',
-            'rightDisk',
-            'leftPath',
-            'rightPath',
-            'windowsConfig',
-        ]);
+        $config = [
+            'acl'           => $this->configRepository->getAcl(),
+            'leftDisk'      => $this->configRepository->getLeftDisk(),
+            'rightDisk'     => $this->configRepository->getRightDisk(),
+            'leftPath'      => $this->configRepository->getLeftPath(),
+            'rightPath'     => $this->configRepository->getRightPath(),
+            'windowsConfig' => $this->configRepository->getWindowsConfig(),
+        ];
 
         // disk list
-        foreach (config('file-manager.diskList') as $disk) {
+        foreach ($this->configRepository->getDiskList() as $disk) {
             if (array_key_exists($disk, config('filesystems.disks'))) {
                 $config['disks'][$disk] = array_only(
                     config('filesystems.disks')[$disk], ['driver']
@@ -118,6 +134,8 @@ class FileManager
      */
     public function upload($disk, $path, $files, $overwrite)
     {
+        $fileNotUploaded = false;
+
         foreach ($files as $file) {
             // skip or overwrite files
             if (!$overwrite
@@ -127,12 +145,41 @@ class FileManager
                 continue;
             }
 
+            // check file size if need
+            if ($this->configRepository->getMaxUploadFileSize()
+                && $file->getClientSize() / 1024 > $this->configRepository->getMaxUploadFileSize()
+            ) {
+                $fileNotUploaded = true;
+                continue;
+            }
+
+            // check file type if need
+            if ($this->configRepository->getAllowFileTypes()
+                && !in_array(
+                    $file->getClientOriginalExtension(),
+                    $this->configRepository->getAllowFileTypes()
+                )
+            ) {
+                $fileNotUploaded = true;
+                continue;
+            }
+
             // overwrite or save file
             Storage::disk($disk)->putFileAs(
                 $path,
                 $file,
                 $file->getClientOriginalName()
             );
+        }
+
+        // If the some file was not uploaded
+        if ($fileNotUploaded) {
+            return [
+                'result' => [
+                    'status'  => 'warning',
+                    'message' => trans('file-manager::response.notAllUploaded'),
+                ],
+            ];
         }
 
         return [
@@ -260,10 +307,10 @@ class FileManager
     public function thumbnails($disk, $path)
     {
         // create thumbnail
-        if (config('file-manager.cache')) {
+        if ($this->configRepository->getCache()) {
             $thumbnail = Image::cache(function ($image) use ($disk, $path) {
                 $image->make(Storage::disk($disk)->get($path))->fit(80);
-            }, config('file-manager.cache'));
+            }, $this->configRepository->getCache());
 
             // output
             return response()->make(

@@ -111,6 +111,45 @@ leftDisk and leftPath is default for the file manager windows configuration - 1,
 'diskList'  => ['images', 'public'],
 ```
 
+## Dynamic configuration
+
+You can create your own configuration, for example for different users or their roles.
+
+Create new class - example - TestConfigRepository
+
+```php
+namespace App\Http;
+
+use Alexusmai\LaravelFileManager\Services\ConfigService\ConfigRepository;
+
+class TestConfigRepository implements ConfigRepository
+{
+    // implement all methods from interface
+    
+    /**
+     * Get disk list
+     *
+     * ['public', 'local', 's3']
+     *
+     * @return array
+     */
+    public function getDiskList(): array
+    {
+        if (\Auth::id() === 1) {
+            return [
+                ['public', 'local', 's3'],
+            ];
+        }
+        
+        return ['public'];
+    }
+    
+    ...
+}
+```
+
+For example see [src/Services/ConfigService/DefaultConfigRepository.php](https://github.com/alexusmai/laravel-file-manager/blob/master/src/Services/ConfigService/DefaultConfigRepository.php)
+
 ## What's next
 
 [ACL](./acl.md)

@@ -12,7 +12,7 @@ trait ContentTrait
      * Get content for the selected disk and path
      *
      * @param      $disk
-     * @param null $path
+     * @param  null  $path
      *
      * @return array
      */
@@ -33,7 +33,7 @@ trait ContentTrait
      * Get directories with properties
      *
      * @param      $disk
-     * @param null $path
+     * @param  null  $path
      *
      * @return array
      */
@@ -48,7 +48,7 @@ trait ContentTrait
      * Get files with properties
      *
      * @param      $disk
-     * @param null $path
+     * @param  null  $path
      *
      * @return array
      */
@@ -85,7 +85,7 @@ trait ContentTrait
      * File properties
      *
      * @param      $disk
-     * @param null $path
+     * @param  null  $path
      *
      * @return mixed
      */
@@ -103,7 +103,7 @@ trait ContentTrait
         $file['filename'] = $pathInfo['filename'];
 
         // if ACL ON
-        if (config('file-manager.acl')) {
+        if ($this->configRepository->getAcl()) {
             return $this->aclFilter($disk, [$file])[0];
         }
 
@@ -113,10 +113,10 @@ trait ContentTrait
     /**
      * Get properties for the selected directory
      *
-     * @param      $disk
-     * @param null $path
+     * @param $disk
+     * @param  null  $path
      *
-     * @return mixed
+     * @return array|false
      */
     public function directoryProperties($disk, $path = null)
     {
@@ -124,12 +124,20 @@ trait ContentTrait
 
         $pathInfo = pathinfo($path);
 
+        /**
+         * S3 didn't return metadata for directories
+         */
+        if (!$directory) {
+            $directory['path'] = $path;
+            $directory['type'] = 'dir';
+        }
+
         $directory['basename'] = $pathInfo['basename'];
         $directory['dirname'] = $pathInfo['dirname'] === '.' ? ''
             : $pathInfo['dirname'];
 
         // if ACL ON
-        if (config('file-manager.acl')) {
+        if ($this->configRepository->getAcl()) {
             return $this->aclFilter($disk, [$directory])[0];
         }
 
@@ -156,7 +164,7 @@ trait ContentTrait
         }, $dirsList);
 
         // if ACL ON
-        if (config('file-manager.acl')) {
+        if ($this->configRepository->getAcl()) {
             return array_values($this->aclFilter($disk, $dirs));
         }
 
@@ -179,7 +187,7 @@ trait ContentTrait
         });
 
         // if ACL ON
-        if (config('file-manager.acl')) {
+        if ($this->configRepository->getAcl()) {
             return array_values($this->aclFilter($disk, $files));
         }
 
@@ -206,7 +214,7 @@ trait ContentTrait
         }, $content);
 
         // filter files and folders
-        if (config('file-manager.aclHideFromFM')) {
+        if ($this->configRepository->getAclHideFromFM()) {
             return array_filter($withAccess, function ($item) {
                 return $item['acl'] !== 0;
             });

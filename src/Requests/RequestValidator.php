@@ -2,6 +2,7 @@
 
 namespace Alexusmai\LaravelFileManager\Requests;
 
+use Alexusmai\LaravelFileManager\Services\ConfigService\ConfigRepository;
 use Illuminate\Foundation\Http\FormRequest;
 use Storage;
 
@@ -26,12 +27,14 @@ class RequestValidator extends FormRequest
      */
     public function rules()
     {
+        $config = resolve(ConfigRepository::class);
+
         return [
             'disk' => [
                 'sometimes',
                 'string',
-                function ($attribute, $value, $fail) {
-                    if (!in_array($value, config('file-manager.diskList')) ||
+                function ($attribute, $value, $fail) use($config) {
+                    if (!in_array($value, $config->getDiskList()) ||
                         !array_key_exists($value, config('filesystems.disks'))
                     ) {
                         return $fail(trans('file-manager::response.diskNotFound'));

@@ -16,7 +16,7 @@ trait CheckTrait
      */
     public function checkDisk($name)
     {
-        return in_array($name, config('file-manager.diskList'))
+        return in_array($name, $this->configRepository->getDiskList())
             && array_key_exists($name, config('filesystems.disks'));
     }
 

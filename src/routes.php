@@ -1,7 +1,21 @@
 <?php
 
+use Alexusmai\LaravelFileManager\Services\ConfigService\ConfigRepository;
+
+$config = resolve(ConfigRepository::class);
+
+// App middleware list
+$middleware = $config->getMiddleware();
+
+/**
+ * If ACL ON add "fm-acl" middleware to array
+ */
+if ($config->getAcl()) {
+    $middleware[] = 'fm-acl';
+}
+
 Route::group([
-    'middleware' => config('file-manager.middleware'),
+    'middleware' => $middleware,
     'prefix'     => 'file-manager',
     'namespace'  => 'Alexusmai\LaravelFileManager\Controllers',
 ], function () {

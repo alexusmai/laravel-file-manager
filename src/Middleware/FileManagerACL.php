@@ -3,22 +3,26 @@
 namespace Alexusmai\LaravelFileManager\Middleware;
 
 use Alexusmai\LaravelFileManager\Services\ACLService\ACL;
+use Alexusmai\LaravelFileManager\Services\ConfigService\ConfigRepository;
+use Alexusmai\LaravelFileManager\Traits\PathTrait;
 use Closure;
 
 class FileManagerACL
 {
+    use PathTrait;
+
     /**
      * Handle an incoming request.
      *
-     * @param  \Illuminate\Http\Request $request
-     * @param  \Closure                 $next
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Closure  $next
      *
      * @return mixed
      */
     public function handle($request, Closure $next)
     {
         // if ACL is OFF
-        if (!config('file-manager.acl')) {
+        if (!resolve(ConfigRepository::class)->getAcl()) {
             return $next($request);
         }
 
@@ -59,11 +63,12 @@ class FileManagerACL
             // Create new file or directory ====================================
             case 'fm.create-file':
             case 'fm.create-directory':
-                // get new file or folder name
-                $name = $request->has('name') ? $request->input('name') : null;
+                $name = $request->input('name');
+                $pathToWrite = $request->input('path')
+                    ? $request->input('path').'/' : '';
 
                 // need r/w access
-                if ($acl->getAccessLevel($disk, $path.'/'.$name) !== 2) {
+                if ($acl->getAccessLevel($disk, $pathToWrite.$name) !== 2) {
                     return $this->errorMessage();
                 }
 
@@ -71,11 +76,13 @@ class FileManagerACL
 
             // update file =====================================================
             case 'fm.update-file':
-                // get updated file name
-                $name = $request->has('file') ? $request->input('file') : null;
+                $pathToWrite = $request->input('path')
+                    ? $request->input('path').'/' : '';
+
+                $name = $request->file('file')->getClientOriginalName();
 
                 // need r/w access
-                if ($acl->getAccessLevel($disk, $path.'/'.$name) !== 2) {
+                if ($acl->getAccessLevel($disk, $pathToWrite.$name) !== 2) {
                     return $this->errorMessage();
                 }
 
@@ -83,8 +90,21 @@ class FileManagerACL
 
             // upload files ====================================================
             case 'fm.upload':
-                // need r/w access
-                if ($acl->getAccessLevel($disk, $path.'/*') !== 2) {
+                $pathToWrite = $request->input('path')
+                    ? $request->input('path').'/' : '';
+
+                // filter
+                $firstFall = array_first($request->file('files'),
+                    function ($value) use ($disk, $acl, $pathToWrite) {
+                        // need r/w access
+                        return $acl->getAccessLevel(
+                                $disk,
+                                $pathToWrite.$value->getClientOriginalName())
+                            !== 2;
+                    }, null);
+
+                // if founded one access error
+                if ($firstFall) {
                     return $this->errorMessage();
                 }
 
@@ -92,10 +112,8 @@ class FileManagerACL
 
             // delete ==========================================================
             case 'fm.delete':
-                // get items to delete
-                $items = $request->has('items') ? $request->input('items') : [];
                 // filter
-                $firstFall = array_first($items,
+                $firstFall = array_first($request->input('items'),
                     function ($value) use ($disk, $acl) {
                         // need r/w access
                         return $acl->getAccessLevel($disk, $value['path'])
@@ -177,7 +195,13 @@ class FileManagerACL
             // zip =============================================================
             case 'fm.zip':
                 // can user write to selected folder?
-                $writeToFolder = $acl->getAccessLevel($disk, $path);
+                $writeToFolder = $acl->getAccessLevel(
+                    $disk,
+                    $this->newPath(
+                        $request->input('path'),
+                        $request->input('name')
+                    )
+                );
                 // need r/w access
                 if ($writeToFolder !== 2) {
                     return $this->errorMessage();
@@ -208,17 +232,21 @@ class FileManagerACL
 
             // unzip ===========================================================
             case 'fm.unzip':
-                // can user write to selected folder?
-                $writeToFolder = $acl->getAccessLevel($disk, dirname($path));
-                // need r/w access
-                if ($writeToFolder !== 2) {
+                if ($request->input('folder')) {
+                    $dirname = dirname($path) === '.' ? '' : dirname($path).'/';
+                    $pathToWrite = $dirname.$request->input('folder');
+                } else {
+                    $pathToWrite = dirname($path) === '.' ? '/'
+                        : dirname($path);
+                }
+
+                // r/w access
+                if ($acl->getAccessLevel($disk, $pathToWrite) !== 2) {
                     return $this->errorMessage();
                 }
 
-                // can user read zip file?
-                $readZip = $acl->getAccessLevel($disk, $path);
                 // need r access
-                if ($readZip === 0) {
+                if ($acl->getAccessLevel($disk, $path) === 0) {
                     return $this->errorMessage();
                 }
 
