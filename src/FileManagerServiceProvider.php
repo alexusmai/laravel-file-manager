@@ -3,6 +3,8 @@
 namespace Alexusmai\LaravelFileManager;
 
 use Alexusmai\LaravelFileManager\Middleware\FileManagerACL;
+use Alexusmai\LaravelFileManager\Services\ACLService\ACLRepository;
+use Alexusmai\LaravelFileManager\Services\ConfigService\ConfigRepository;
 use Illuminate\Support\ServiceProvider;
 
 class FileManagerServiceProvider extends ServiceProvider
@@ -62,10 +64,16 @@ class FileManagerServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        // Config Repository
+        $this->app->bind(
+            ConfigRepository::class,
+            $this->app['config']['file-manager.configRepository']
+        );
+
         // ACL Repository
         $this->app->bind(
-            'Alexusmai\LaravelFileManager\Services\ACLService\ACLRepository',
-            $this->app['config']['file-manager.aclRepository']
+            ACLRepository::class,
+            $this->app->make(ConfigRepository::class)->getAclRepository()
         );
 
         // register ACL middleware
