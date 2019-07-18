@@ -64,7 +64,7 @@
 * Dynamic configuration (v2.4)
 * Supported locales : ru, en, ar, sr
 
-## In new version 2.4
+## In a new version 2.4
 
 Now you can create your own config repositories, it will allow to change your configuration dynamically.
 
