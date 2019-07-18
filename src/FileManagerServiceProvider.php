@@ -64,6 +64,11 @@ class FileManagerServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        $this->mergeConfigFrom(
+            __DIR__.'/../config/file-manager.php',
+            'file-manager'
+        );
+
         // Config Repository
         $this->app->bind(
             ConfigRepository::class,
