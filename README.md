@@ -63,7 +63,7 @@
 * Events (v2.2)
 * Thumbnails lazy load
 * Dynamic configuration (v2.4)
-* Supported locales : ru, en, ar, sr
+* Supported locales : ru, en, ar, sr, cs
 
 ## In a new version 2.4
 
