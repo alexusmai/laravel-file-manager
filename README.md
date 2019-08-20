@@ -50,6 +50,7 @@
 * Integration with WYSIWYG Editors:
   * CKEditor 4
   * TinyMCE 4
+  * TinyMCE 5
   * SummerNote
   * Standalone button
 * ACL - access control list
