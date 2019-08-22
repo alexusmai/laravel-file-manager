@@ -382,6 +382,16 @@ class FileManagerController extends Controller
     }
 
     /**
+     * Integration with TinyMCE v5
+     *
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function tinymce5()
+    {
+        return view('file-manager::tinymce5');
+    }
+
+    /**
      * Integration with SummerNote
      *
      * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
