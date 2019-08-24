@@ -118,5 +118,6 @@ If you use the ACL, now you don't need to add the acl middleware to configuratio
 * Khalid Bj [D34DlyM4N](https://github.com/D34DlyM4N)
 * NeoSon [lkloon123](https://github.com/lkloon123)
 * Aleksandar Stevanović [aleks989](https://github.com/aleks989)
+* Aleš Nejdr [mige](https://github.com/mige)
 
 
