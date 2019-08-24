@@ -50,6 +50,7 @@
 * Integration with WYSIWYG Editors:
   * CKEditor 4
   * TinyMCE 4
+  * TinyMCE 5
   * SummerNote
   * Standalone button
 * ACL - access control list
@@ -62,7 +63,7 @@
 * Events (v2.2)
 * Thumbnails lazy load
 * Dynamic configuration (v2.4)
-* Supported locales : ru, en, ar, sr
+* Supported locales : ru, en, ar, sr, cs
 
 ## In a new version 2.4
 
@@ -117,5 +118,6 @@ If you use the ACL, now you don't need to add the acl middleware to configuratio
 * Khalid Bj [D34DlyM4N](https://github.com/D34DlyM4N)
 * NeoSon [lkloon123](https://github.com/lkloon123)
 * Aleksandar Stevanović [aleks989](https://github.com/aleks989)
+* Aleš Nejdr [mige](https://github.com/mige)
 
 

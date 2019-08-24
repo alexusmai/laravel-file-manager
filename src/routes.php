@@ -83,6 +83,9 @@ Route::group([
     Route::get('tinymce', 'FileManagerController@tinymce')
         ->name('fm.tinymce');
 
+    Route::get('tinymce5', 'FileManagerController@tinymce5')
+        ->name('fm.tinymce5');
+
     Route::get('summernote', 'FileManagerController@summernote')
         ->name('fm.summernote');
 
