@@ -68,7 +68,7 @@ tinymce.init({
           width : x * 0.8,
           height : y * 0.8,
           onMessage: (api, message) => {
-            callback(message.content)
+              callback(message.content, { text: message.text })
           }
         })
       }
