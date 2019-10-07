@@ -20,7 +20,7 @@
         "php": ">=7.0.0",
         "ext-zip": "*",
         "ext-json": "*",
-        "laravel/framework": "5.5.*|5.6.*|5.7.*|5.8.*|6.0.*",
+        "laravel/framework": "5.5.*|5.6.*|5.7.*|5.8.*|^6.0",
         "league/flysystem": "^1.0",
         "intervention/image": "^2.4",
         "intervention/imagecache": "^2.3"
