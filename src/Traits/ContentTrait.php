@@ -161,7 +161,7 @@ trait ContentTrait
 
         // remove 'filename' param
         $dirs = array_map(function ($item) {
-            return array_except($item, ['filename']);
+            return Arr::except($item, ['filename']);
         }, $dirsList);
 
         // if ACL ON
