@@ -48,7 +48,7 @@ abstract class Transfer
         return [
             'result' => [
                 'status'  => 'success',
-                'message' => trans('file-manager::response.copied'),
+                'message' => 'copied',
             ],
         ];
     }

@@ -50,7 +50,7 @@ class Zip
         return [
             'result' => [
                 'status'  => 'warning',
-                'message' => trans('file-manager::response.zipError'),
+                'message' => 'zipError',
             ],
         ];
     }
@@ -74,7 +74,7 @@ class Zip
         return [
             'result' => [
                 'status'  => 'warning',
-                'message' => trans('file-manager::response.zipError'),
+                'message' => 'zipError',
             ],
         ];
     }

@@ -267,7 +267,7 @@ class FileManagerACL
         return response()->json([
             'result' => [
                 'status'  => 'error',
-                'message' => trans('file-manager::response.aclError'),
+                'message' => 'aclError',
             ],
         ]);
     }
