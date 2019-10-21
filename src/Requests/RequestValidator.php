@@ -37,7 +37,7 @@ class RequestValidator extends FormRequest
                     if (!in_array($value, $config->getDiskList()) ||
                         !array_key_exists($value, config('filesystems.disks'))
                     ) {
-                        return $fail(trans('file-manager::response.diskNotFound'));
+                        return $fail('diskNotFound');
                     }
                 },
             ],
@@ -48,7 +48,7 @@ class RequestValidator extends FormRequest
                 function ($attribute, $value, $fail) {
                     if ($value && !Storage::disk($this->input('disk'))->exists($value)
                     ) {
-                        return $fail(trans('file-manager::response.pathNotFound'));
+                        return $fail('pathNotFound');
                     }
                 },
             ],
@@ -62,6 +62,6 @@ class RequestValidator extends FormRequest
      */
     public function message()
     {
-        return trans('file-manager::response.notFound');
+        return 'notFound';
     }
 }

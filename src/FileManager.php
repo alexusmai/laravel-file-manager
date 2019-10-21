@@ -43,7 +43,7 @@ class FileManager
             return [
                 'result' => [
                     'status'  => 'danger',
-                    'message' => trans('file-manager::response.noConfig'),
+                    'message' => 'noConfig'
                 ],
             ];
         }
@@ -177,7 +177,7 @@ class FileManager
             return [
                 'result' => [
                     'status'  => 'warning',
-                    'message' => trans('file-manager::response.notAllUploaded'),
+                    'message' => 'notAllUploaded',
                 ],
             ];
         }
@@ -185,7 +185,7 @@ class FileManager
         return [
             'result' => [
                 'status'  => 'success',
-                'message' => trans('file-manager::response.uploaded'),
+                'message' => 'uploaded',
             ],
         ];
     }
@@ -225,7 +225,7 @@ class FileManager
         return [
             'result' => [
                 'status'  => 'success',
-                'message' => trans('file-manager::response.deleted'),
+                'message' => 'deleted',
             ],
         ];
     }
@@ -270,7 +270,7 @@ class FileManager
         return [
             'result' => [
                 'status'  => 'success',
-                'message' => trans('file-manager::response.renamed'),
+                'message' => 'renamed',
             ],
         ];
     }
@@ -380,7 +380,7 @@ class FileManager
             return [
                 'result' => [
                     'status'  => 'warning',
-                    'message' => trans('file-manager::response.dirExist'),
+                    'message' => 'dirExist',
                 ],
             ];
         }
@@ -401,7 +401,7 @@ class FileManager
         return [
             'result'    => [
                 'status'  => 'success',
-                'message' => trans('file-manager::response.dirCreated'),
+                'message' => 'dirCreated',
             ],
             'directory' => $directoryProperties,
             'tree'      => [$tree],
@@ -427,7 +427,7 @@ class FileManager
             return [
                 'result' => [
                     'status'  => 'warning',
-                    'message' => trans('file-manager::response.fileExist'),
+                    'message' => 'fileExist',
                 ],
             ];
         }
@@ -441,7 +441,7 @@ class FileManager
         return [
             'result' => [
                 'status'  => 'success',
-                'message' => trans('file-manager::response.fileCreated'),
+                'message' => 'fileCreated',
             ],
             'file'   => $fileProperties,
         ];
@@ -474,7 +474,7 @@ class FileManager
         return [
             'result' => [
                 'status'  => 'success',
-                'message' => trans('file-manager::response.fileUpdated'),
+                'message' => 'fileUpdated',
             ],
             'file'   => $fileProperties,
         ];

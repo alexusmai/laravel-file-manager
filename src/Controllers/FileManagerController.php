@@ -97,7 +97,7 @@ class FileManagerController extends Controller
         return response()->json([
             'result' => [
                 'status'  => 'success',
-                'message' => trans('file-manager::response.diskSelected'),
+                'message' => 'diskSelected',
             ],
         ]);
     }

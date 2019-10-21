@@ -63,7 +63,7 @@
 * Events (v2.2)
 * Thumbnails lazy load
 * Dynamic configuration (v2.4)
-* Supported locales : ru, en, ar, sr, cs, de
+* Supported locales : ru, en, ar, sr, cs, de, es, nl, zh_CN
 
 ## Laravel 6
 
@@ -128,5 +128,8 @@ If you use the ACL, now you don't need to add the acl middleware to configuratio
 * Aleksandar Stevanović [aleks989](https://github.com/aleks989)
 * Aleš Nejdr [mige](https://github.com/mige)
 * Tobias Matthaiou [TumTum](https://github.com/TumTum)
+* Marc Garcia Torrent - [mgarcia96](https://github.com/mgarcia96)
+* Laurens - [Laussii078](https://github.com/Laussii078)
+* osindex - [osindex](https://github.com/osindex)
 
 

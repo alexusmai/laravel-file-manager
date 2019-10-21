@@ -22,10 +22,6 @@ class FileManagerServiceProvider extends ServiceProvider
         // views
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'file-manager');
 
-        // language files
-        $this->loadTranslationsFrom(__DIR__.'/../resources/lang',
-            'file-manager');
-
         // publish config
         $this->publishes([
             __DIR__
@@ -37,12 +33,6 @@ class FileManagerServiceProvider extends ServiceProvider
             __DIR__
             .'/../resources/views' => resource_path('views/vendor/file-manager'),
         ], 'fm-views');
-
-        // publish language files
-        $this->publishes([
-            __DIR__
-            .'/../resources/lang' => resource_path('lang/vendor/file-manager'),
-        ], 'fm-lang');
 
         // publish js and css files - vue-file-manager module
         $this->publishes([

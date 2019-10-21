@@ -53,7 +53,7 @@ trait CheckTrait
         return [
             'result' => [
                 'status'  => 'danger',
-                'message' => trans('file-manager::response.notFound'),
+                'message' => 'notFound',
             ],
         ];
     }
