@@ -117,6 +117,16 @@ class DefaultConfigRepository implements ConfigRepository
     }
 
     /**
+     * Show / Hide system files and folders
+     *
+     * @return bool
+     */
+    public function getHiddenFiles(): bool
+    {
+        return config('file-manager.hiddenFiles');
+    }
+
+    /**
      * Middleware
      *
      * Add your middleware name to array -> ['web', 'auth', 'admin']

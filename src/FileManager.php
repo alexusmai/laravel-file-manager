@@ -9,6 +9,7 @@ use Alexusmai\LaravelFileManager\Traits\PathTrait;
 use Alexusmai\LaravelFileManager\Services\TransferService\TransferFactory;
 use Alexusmai\LaravelFileManager\Services\ConfigService\ConfigRepository;
 use Illuminate\Support\Str;
+use Illuminate\Support\Arr;
 use Storage;
 use Image;
 
@@ -55,12 +56,13 @@ class FileManager
             'leftPath'      => $this->configRepository->getLeftPath(),
             'rightPath'     => $this->configRepository->getRightPath(),
             'windowsConfig' => $this->configRepository->getWindowsConfig(),
+            'hiddenFiles'   => $this->configRepository->getHiddenFiles(),
         ];
 
         // disk list
         foreach ($this->configRepository->getDiskList() as $disk) {
             if (array_key_exists($disk, config('filesystems.disks'))) {
-                $config['disks'][$disk] = array_only(
+                $config['disks'][$disk] = Arr::only(
                     config('filesystems.disks')[$disk], ['driver']
                 );
             }

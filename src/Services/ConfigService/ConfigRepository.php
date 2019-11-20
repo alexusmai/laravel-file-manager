@@ -87,7 +87,14 @@ interface ConfigRepository
      *
      * [] - no restrictions
      */
-    public function getAllowFileTypes(): array ;
+    public function getAllowFileTypes(): array;
+
+    /**
+     * Show / Hide system files and folders
+     *
+     * @return bool
+     */
+    public function getHiddenFiles(): bool;
 
     /**
      * Middleware

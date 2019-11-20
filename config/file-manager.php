@@ -86,6 +86,11 @@ return [
      */
     'allowFileTypes' => [],
 
+    /**
+     * Show / Hide system files and folders
+     */
+    'hiddenFiles' => true,
+
     /***************************************************************************
      * Middleware
      *
