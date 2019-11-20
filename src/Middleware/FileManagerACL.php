@@ -5,6 +5,8 @@ namespace Alexusmai\LaravelFileManager\Middleware;
 use Alexusmai\LaravelFileManager\Services\ACLService\ACL;
 use Alexusmai\LaravelFileManager\Services\ConfigService\ConfigRepository;
 use Alexusmai\LaravelFileManager\Traits\PathTrait;
+use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Closure;
 
 class FileManagerACL
@@ -12,245 +14,84 @@ class FileManagerACL
     use PathTrait;
 
     /**
+     * Check method names
+     */
+    const CHECKERS = [
+        'fm.tree'             => 'checkContent',
+        'fm.content'          => 'checkContent',
+        'fm.preview'          => 'checkContent',
+        'fm.thumbnails'       => 'checkContent',
+        'fm.url'              => 'checkContent',
+        'fm.stream-file'      => 'checkContent',
+        'fm.download'         => 'checkDownload',
+        'fm.create-file'      => 'checkCreate',
+        'fm.create-directory' => 'checkCreate',
+        'fm.update-file'      => 'checkUpdate',
+        'fm.upload'           => 'checkUpload',
+        'fm.delete'           => 'checkDelete',
+        'fm.paste'            => 'checkPaste',
+        'fm.rename'           => 'checkRename',
+        'fm.zip'              => 'checkZip',
+        'fm.unzip'            => 'checkUnzip',
+    ];
+
+    /**
+     * @var string|null
+     */
+    protected $disk;
+
+    /**
+     * @var string|null
+     */
+    protected $path;
+
+    /**
+     * @var ACL|mixed
+     */
+    protected $acl;
+
+    /**
+     * @var Request
+     */
+    protected $request;
+
+    /**
+     * FileManagerACL constructor.
+     *
+     * @param Request $request
+     * @param ACL     $acl
+     */
+    public function __construct(Request $request, ACL $acl)
+    {
+        $this->disk = $request->has('disk') ? $request->input('disk') : null;
+        $this->path = $request->has('path') ? $request->input('path') : '/';
+
+        $this->acl = $acl;
+
+        $this->request = $request;
+    }
+
+    /**
      * Handle an incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
+     * @param  \Illuminate\Http\Request $request
+     * @param  \Closure                 $next
      *
      * @return mixed
      */
     public function handle($request, Closure $next)
     {
-        // if ACL is OFF
-        if (!resolve(ConfigRepository::class)->getAcl()) {
+        $routeName = $request->route()->getName();
+
+        // if ACL is OFF or route name wasn't found
+        if (!resolve(ConfigRepository::class)->getAcl()
+            || !array_key_exists($routeName, self::CHECKERS)
+        ) {
             return $next($request);
         }
 
-        // get disk and path name
-        $disk = $request->has('disk') ? $request->input('disk') : null;
-        $path = $request->has('path') ? $request->input('path') : '/';
-
-        if (!$disk) {
-            return $next($request);
-        }
-
-        // get ACL service
-        $acl = resolve(ACL::class);
-
-        // switch by route name
-        switch ($request->route()->getName()) {
-            // read ============================================================
-            case 'fm.tree':
-            case 'fm.content':
-            case 'fm.preview':
-            case 'fm.thumbnails':
-            case 'fm.url':
-            case 'fm.stream-file':
-                // need r access
-                if ($acl->getAccessLevel($disk, $path) === 0) {
-                    return $this->errorMessage();
-                }
-
-                break;
-
-            // download ========================================================
-            case 'fm.download':
-                // need r access
-                abort_if($acl->getAccessLevel($disk, $path) === 0, 403);
-
-                break;
-
-            // Create new file or directory ====================================
-            case 'fm.create-file':
-            case 'fm.create-directory':
-                $name = $request->input('name');
-                $pathToWrite = $request->input('path')
-                    ? $request->input('path').'/' : '';
-
-                // need r/w access
-                if ($acl->getAccessLevel($disk, $pathToWrite.$name) !== 2) {
-                    return $this->errorMessage();
-                }
-
-                break;
-
-            // update file =====================================================
-            case 'fm.update-file':
-                $pathToWrite = $request->input('path')
-                    ? $request->input('path').'/' : '';
-
-                $name = $request->file('file')->getClientOriginalName();
-
-                // need r/w access
-                if ($acl->getAccessLevel($disk, $pathToWrite.$name) !== 2) {
-                    return $this->errorMessage();
-                }
-
-                break;
-
-            // upload files ====================================================
-            case 'fm.upload':
-                $pathToWrite = $request->input('path')
-                    ? $request->input('path').'/' : '';
-
-                // filter
-                $firstFall = array_first($request->file('files'),
-                    function ($value) use ($disk, $acl, $pathToWrite) {
-                        // need r/w access
-                        return $acl->getAccessLevel(
-                                $disk,
-                                $pathToWrite.$value->getClientOriginalName())
-                            !== 2;
-                    }, null);
-
-                // if founded one access error
-                if ($firstFall) {
-                    return $this->errorMessage();
-                }
-
-                break;
-
-            // delete ==========================================================
-            case 'fm.delete':
-                // filter
-                $firstFall = array_first($request->input('items'),
-                    function ($value) use ($disk, $acl) {
-                        // need r/w access
-                        return $acl->getAccessLevel($disk, $value['path'])
-                            !== 2;
-                    }, null);
-
-                // if founded one access error
-                if ($firstFall) {
-                    return $this->errorMessage();
-                }
-
-                break;
-
-            // paste ===========================================================
-            case 'fm.paste':
-                // can user write to selected folder?
-                $writeToFolder = $acl->getAccessLevel($disk, $path);
-                // need r/w access
-                if ($writeToFolder !== 2) {
-                    return $this->errorMessage();
-                }
-
-                // get clipboard data
-                $clipboard = $request->input('clipboard');
-
-                if ($clipboard['type'] === 'copy') {
-                    // can user read selected files and folders?
-                    $checkDirs = array_first($clipboard['directories'],
-                        function ($value) use ($clipboard, $acl) {
-                            // need r access
-                            return $acl->getAccessLevel($clipboard['disk'],
-                                    $value) === 0;
-                        }, null);
-
-
-                    $checkFiles = array_first($clipboard['files'],
-                        function ($value) use ($clipboard, $acl) {
-                            // need r access
-                            return $acl->getAccessLevel($clipboard['disk'],
-                                    $value) === 0;
-                        }, null);
-                } else {
-                    // can user delete selected files and folders?
-                    $checkDirs = array_first($clipboard['directories'],
-                        function ($value) use ($clipboard, $acl) {
-                            // need r/w access
-                            return $acl->getAccessLevel($clipboard['disk'],
-                                    $value) !== 2;
-                        }, null);
-
-
-                    $checkFiles = array_first($clipboard['files'],
-                        function ($value) use ($clipboard, $acl) {
-                            // need r/w access
-                            return $acl->getAccessLevel($clipboard['disk'],
-                                    $value) !== 2;
-                        }, null);
-                }
-
-                if ($checkDirs || $checkFiles) {
-                    return $this->errorMessage();
-                }
-
-                break;
-
-            // rename ==========================================================
-            case 'fm.rename':
-                // old name
-                $path = $request->has('oldName') ? $request->input('oldName')
-                    : null;
-
-                // need r/w access
-                if ($acl->getAccessLevel($disk, $path) !== 2) {
-                    return $this->errorMessage();
-                }
-
-                break;
-
-            // zip =============================================================
-            case 'fm.zip':
-                // can user write to selected folder?
-                $writeToFolder = $acl->getAccessLevel(
-                    $disk,
-                    $this->newPath(
-                        $request->input('path'),
-                        $request->input('name')
-                    )
-                );
-                // need r/w access
-                if ($writeToFolder !== 2) {
-                    return $this->errorMessage();
-                }
-
-                // data to zip
-                $elements = $request->input('elements');
-
-                // can user read selected files and folders?
-                $checkDirs = array_first($elements['directories'],
-                    function ($value) use ($disk, $elements, $acl) {
-                        // need r access
-                        return $acl->getAccessLevel($disk, $value) === 0;
-                    }, null);
-
-
-                $checkFiles = array_first($elements['files'],
-                    function ($value) use ($disk, $elements, $acl) {
-                        // need r access
-                        return $acl->getAccessLevel($disk, $value) === 0;
-                    }, null);
-
-                if ($checkDirs || $checkFiles) {
-                    return $this->errorMessage();
-                }
-
-                break;
-
-            // unzip ===========================================================
-            case 'fm.unzip':
-                if ($request->input('folder')) {
-                    $dirname = dirname($path) === '.' ? '' : dirname($path).'/';
-                    $pathToWrite = $dirname.$request->input('folder');
-                } else {
-                    $pathToWrite = dirname($path) === '.' ? '/'
-                        : dirname($path);
-                }
-
-                // r/w access
-                if ($acl->getAccessLevel($disk, $pathToWrite) !== 2) {
-                    return $this->errorMessage();
-                }
-
-                // need r access
-                if ($acl->getAccessLevel($disk, $path) === 0) {
-                    return $this->errorMessage();
-                }
-
-                break;
+        if (!call_user_func([$this, self::CHECKERS[$routeName]])) {
+            return $this->errorMessage();
         }
 
         // return request
@@ -270,5 +111,253 @@ class FileManagerACL
                 'message' => 'aclError',
             ],
         ]);
+    }
+
+    /**
+     * Check content actions
+     *
+     * @return bool
+     */
+    protected function checkContent()
+    {
+        // need r access
+        if ($this->acl->getAccessLevel($this->disk, $this->path) === 0) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Check download actions
+     */
+    protected function checkDownload()
+    {
+        // need r access
+        abort_if(
+            $this->acl->getAccessLevel($this->disk, $this->path) === 0,
+            403
+        );
+
+        return true;
+    }
+
+    /**
+     * Check create actions
+     *
+     * @return bool
+     */
+    protected function checkCreate()
+    {
+        $name = $this->request->input('name');
+        $pathToWrite = $this->request->input('path')
+            ? $this->request->input('path').'/' : '';
+
+        // need r/w access
+        if ($this->acl->getAccessLevel($this->disk, $pathToWrite.$name) !== 2) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Check update actions
+     *
+     * @return bool
+     */
+    protected function checkUpdate()
+    {
+        $pathToWrite = $this->request->input('path')
+            ? $this->request->input('path').'/' : '';
+
+        $name = $this->request->file('file')->getClientOriginalName();
+
+        // need r/w access
+        if ($this->acl->getAccessLevel($this->disk, $pathToWrite.$name) !== 2) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Check upload actions
+     *
+     * @return bool
+     */
+    protected function checkUpload()
+    {
+        $pathToWrite = $this->request->input('path')
+            ? $this->request->input('path').'/' : '';
+
+        // filter
+        $firstFall = Arr::first($this->request->file('files'),
+            function ($value) use ($pathToWrite) {
+                // need r/w access
+                return $this->acl->getAccessLevel(
+                        $this->disk,
+                        $pathToWrite.$value->getClientOriginalName()
+                    ) !== 2;
+            }, null);
+
+        // if founded one access error
+        if ($firstFall) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Check delete actions
+     *
+     * @return bool
+     */
+    protected function checkDelete()
+    {
+        $firstFall = Arr::first($this->request->input('items'),
+            function ($value) {
+                // need r/w access
+                return $this->acl->getAccessLevel($this->disk, $value['path'])
+                    !== 2;
+            }, null);
+
+        if ($firstFall) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Check paste action
+     *
+     * @return bool
+     */
+    protected function checkPaste()
+    {
+        // get clipboard data
+        $clipboard = $this->request->input('clipboard');
+
+        // copy - r, cut - rw
+        $getLevel = $clipboard['type'] === 'copy' ? 1 : 2;
+
+        // can user copy or cut selected files and folders
+        $checkDirs = Arr::first($clipboard['directories'],
+            function ($value) use ($clipboard, $getLevel) {
+                return $this->acl->getAccessLevel($clipboard['disk'], $value)
+                    < $getLevel;
+            }, null);
+
+        $checkFiles = Arr::first($clipboard['files'],
+            function ($value) use ($clipboard, $getLevel) {
+                return $this->acl->getAccessLevel($clipboard['disk'], $value)
+                    < $getLevel;
+            }, null);
+
+        // can user write to selected folder?
+        $writeToFolder = $this->acl->getAccessLevel($this->disk, $this->path);
+
+        if ($checkDirs || $checkFiles || $writeToFolder !== 2) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Check rename actions
+     *
+     * @return bool
+     */
+    protected function checkRename()
+    {
+        // old path
+        $oldPath = $this->request->has('oldName');
+
+        // new path
+        $newPath = $this->request->has('newName');
+
+        // need r/w access
+        if (
+            $this->acl->getAccessLevel($this->disk, $oldPath) !== 2
+            && $this->acl->getAccessLevel($this->disk, $newPath) !== 2
+        ) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Check zip actions
+     *
+     * @return bool
+     */
+    protected function checkZip()
+    {
+        // can user write to selected folder?
+        $writeToFolder = $this->acl->getAccessLevel(
+            $this->disk,
+            $this->newPath(
+                $this->request->input('path'),
+                $this->request->input('name')
+            )
+        );
+
+        // need r/w access
+        if ($writeToFolder !== 2) {
+            return false;
+        }
+
+        // data to zip
+        $elements = $this->request->input('elements');
+
+        // can user read selected files and folders?
+        $checkDirs = Arr::first($elements['directories'],
+            function ($value) {
+                // need r access
+                return $this->acl->getAccessLevel($this->disk, $value) === 0;
+            }, null);
+
+
+        $checkFiles = Arr::first($elements['files'],
+            function ($value) {
+                // need r access
+                return $this->acl->getAccessLevel($this->disk, $value) === 0;
+            }, null);
+
+        if ($checkDirs || $checkFiles) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Check unzip actions
+     *
+     * @return bool
+     */
+    protected function checkUnzip()
+    {
+        if ($this->request->input('folder')) {
+            $dirname = dirname($this->path) === '.' ? ''
+                : dirname($this->path).'/';
+            $pathToWrite = $dirname.$this->request->input('folder');
+        } else {
+            $pathToWrite = dirname($this->path) === '.' ? '/'
+                : dirname($this->path);
+        }
+
+        if (
+            $this->acl->getAccessLevel($this->disk, $pathToWrite) !== 2
+            || $this->acl->getAccessLevel($this->disk, $this->path) === 0
+        ) {
+            return false;
+        }
+
+        return true;
     }
 }
