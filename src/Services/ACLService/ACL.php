@@ -3,6 +3,7 @@
 namespace Alexusmai\LaravelFileManager\Services\ACLService;
 
 use Alexusmai\LaravelFileManager\Services\ConfigService\ConfigRepository;
+use Illuminate\Support\Arr;
 use Cache;
 
 class ACL
@@ -45,7 +46,7 @@ class ACL
         $rules = $this->rulesForDisk($disk);
 
         // find the first rule where the paths are equal
-        $firstRule = array_first($rules, function ($value) use ($path) {
+        $firstRule = Arr::first($rules, function ($value) use ($path) {
             return fnmatch($value['path'], $path);
         });
 
@@ -53,7 +54,7 @@ class ACL
             return $firstRule['access'];
         }
 
-        // positive or negative ACL strategy
+        // blacklist or whitelist (ACL strategy)
         return $this->configRepository->getAclStrategy() === 'blacklist' ? 2 : 0;
     }
 
@@ -66,7 +67,7 @@ class ACL
      */
     protected function rulesForDisk($disk)
     {
-        return array_where($this->rulesList(),
+        return Arr::where($this->rulesList(),
             function ($value) use ($disk) {
                 return $value['disk'] === $disk;
             });

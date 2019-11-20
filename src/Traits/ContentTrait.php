@@ -3,6 +3,7 @@
 namespace Alexusmai\LaravelFileManager\Traits;
 
 use Alexusmai\LaravelFileManager\Services\ACLService\ACL;
+use Illuminate\Support\Arr;
 use Storage;
 
 trait ContentTrait
@@ -11,8 +12,8 @@ trait ContentTrait
     /**
      * Get content for the selected disk and path
      *
-     * @param      $disk
-     * @param  null  $path
+     * @param       $disk
+     * @param  null $path
      *
      * @return array
      */
@@ -32,8 +33,8 @@ trait ContentTrait
     /**
      * Get directories with properties
      *
-     * @param      $disk
-     * @param  null  $path
+     * @param       $disk
+     * @param  null $path
      *
      * @return array
      */
@@ -47,8 +48,8 @@ trait ContentTrait
     /**
      * Get files with properties
      *
-     * @param      $disk
-     * @param  null  $path
+     * @param       $disk
+     * @param  null $path
      *
      * @return array
      */
@@ -84,8 +85,8 @@ trait ContentTrait
     /**
      * File properties
      *
-     * @param      $disk
-     * @param  null  $path
+     * @param       $disk
+     * @param  null $path
      *
      * @return mixed
      */
@@ -113,8 +114,8 @@ trait ContentTrait
     /**
      * Get properties for the selected directory
      *
-     * @param $disk
-     * @param  null  $path
+     * @param       $disk
+     * @param  null $path
      *
      * @return array|false
      */
@@ -154,13 +155,13 @@ trait ContentTrait
     protected function filterDir($disk, $content)
     {
         // select only dir
-        $dirsList = array_where($content, function ($item) {
+        $dirsList = Arr::where($content, function ($item) {
             return $item['type'] === 'dir';
         });
 
         // remove 'filename' param
         $dirs = array_map(function ($item) {
-            return array_except($item, ['filename']);
+            return Arr::except($item, ['filename']);
         }, $dirsList);
 
         // if ACL ON
@@ -182,7 +183,7 @@ trait ContentTrait
     protected function filterFile($disk, $content)
     {
         // select only files
-        $files = array_where($content, function ($item) {
+        $files = Arr::where($content, function ($item) {
             return $item['type'] === 'file';
         });
 
