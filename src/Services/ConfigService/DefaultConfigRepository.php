@@ -119,9 +119,9 @@ class DefaultConfigRepository implements ConfigRepository
     /**
      * Show / Hide system files and folders
      *
-     * @return bool
+     * @return bool|null
      */
-    public function getHiddenFiles(): bool
+    public function getHiddenFiles(): ?bool
     {
         return config('file-manager.hiddenFiles');
     }
