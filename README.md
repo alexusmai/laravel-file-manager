@@ -20,6 +20,7 @@
 * [Integration](./docs/integration.md)
 * [ACL](./docs/acl.md)
 * [Events](./docs/events.md)
+* [Update](./docs/update.md)
 
 ## Features
 
