@@ -64,7 +64,7 @@
 * Events (v2.2)
 * Thumbnails lazy load
 * Dynamic configuration (v2.4)
-* Supported locales : ru, en, ar, sr, cs, de, es, nl, zh_CN
+* Supported locales : ru, en, ar, sr, cs, de, es, nl, zh-CN, fa, it, tr
 
 ## In a new version 2.4
 
@@ -114,15 +114,8 @@ If you use the ACL, now you don't need to add the acl middleware to configuratio
 'middleware' => ['web'],
 ```
 
-## Thanks
+## Contributors
 
-* Khalid Bj [D34DlyM4N](https://github.com/D34DlyM4N)
-* NeoSon [lkloon123](https://github.com/lkloon123)
-* Aleksandar Stevanović [aleks989](https://github.com/aleks989)
-* Aleš Nejdr [mige](https://github.com/mige)
-* Tobias Matthaiou [TumTum](https://github.com/TumTum)
-* Marc Garcia Torrent - [mgarcia96](https://github.com/mgarcia96)
-* Laurens - [Laussii078](https://github.com/Laussii078)
-* osindex - [osindex](https://github.com/osindex)
+[![](https://sourcerer.io/fame/alexusmai/alexusmai/laravel-file-manager/images/0)](https://sourcerer.io/fame/alexusmai/alexusmai/laravel-file-manager/links/0)[![](https://sourcerer.io/fame/alexusmai/alexusmai/laravel-file-manager/images/1)](https://sourcerer.io/fame/alexusmai/alexusmai/laravel-file-manager/links/1)[![](https://sourcerer.io/fame/alexusmai/alexusmai/laravel-file-manager/images/2)](https://sourcerer.io/fame/alexusmai/alexusmai/laravel-file-manager/links/2)[![](https://sourcerer.io/fame/alexusmai/alexusmai/laravel-file-manager/images/3)](https://sourcerer.io/fame/alexusmai/alexusmai/laravel-file-manager/links/3)[![](https://sourcerer.io/fame/alexusmai/alexusmai/laravel-file-manager/images/4)](https://sourcerer.io/fame/alexusmai/alexusmai/laravel-file-manager/links/4)[![](https://sourcerer.io/fame/alexusmai/alexusmai/laravel-file-manager/images/5)](https://sourcerer.io/fame/alexusmai/alexusmai/laravel-file-manager/links/5)[![](https://sourcerer.io/fame/alexusmai/alexusmai/laravel-file-manager/images/6)](https://sourcerer.io/fame/alexusmai/alexusmai/laravel-file-manager/links/6)[![](https://sourcerer.io/fame/alexusmai/alexusmai/laravel-file-manager/images/7)](https://sourcerer.io/fame/alexusmai/alexusmai/laravel-file-manager/links/7)
 
 
