@@ -121,11 +121,7 @@ class FileManagerACL
     protected function checkContent()
     {
         // need r access
-        if ($this->acl->getAccessLevel($this->disk, $this->path) === 0) {
-            return false;
-        }
-
-        return true;
+        return ! ($this->acl->getAccessLevel($this->disk, $this->path) === 0);
     }
 
     /**
@@ -154,11 +150,7 @@ class FileManagerACL
             ? $this->request->input('path').'/' : '';
 
         // need r/w access
-        if ($this->acl->getAccessLevel($this->disk, $pathToWrite.$name) !== 2) {
-            return false;
-        }
-
-        return true;
+        return ! ($this->acl->getAccessLevel($this->disk, $pathToWrite.$name) !== 2);
     }
 
     /**
@@ -174,11 +166,7 @@ class FileManagerACL
         $name = $this->request->file('file')->getClientOriginalName();
 
         // need r/w access
-        if ($this->acl->getAccessLevel($this->disk, $pathToWrite.$name) !== 2) {
-            return false;
-        }
-
-        return true;
+        return ! ($this->acl->getAccessLevel($this->disk, $pathToWrite.$name) !== 2);
     }
 
     /**
@@ -259,11 +247,7 @@ class FileManagerACL
         // can user write to selected folder?
         $writeToFolder = $this->acl->getAccessLevel($this->disk, $this->path);
 
-        if ($checkDirs || $checkFiles || $writeToFolder !== 2) {
-            return false;
-        }
-
-        return true;
+        return ! ($checkDirs || $checkFiles || $writeToFolder !== 2);
     }
 
     /**
@@ -274,20 +258,14 @@ class FileManagerACL
     protected function checkRename()
     {
         // old path
-        $oldPath = $this->request->has('oldName');
+        $oldPath = $this->request->input('oldName');
 
         // new path
-        $newPath = $this->request->has('newName');
+        $newPath = $this->request->input('newName');
 
         // need r/w access
-        if (
-            $this->acl->getAccessLevel($this->disk, $oldPath) !== 2
-            && $this->acl->getAccessLevel($this->disk, $newPath) !== 2
-        ) {
-            return false;
-        }
-
-        return true;
+        return ! ($this->acl->getAccessLevel($this->disk, $oldPath) !== 2
+            && $this->acl->getAccessLevel($this->disk, $newPath) !== 2);
     }
 
     /**
@@ -328,11 +306,7 @@ class FileManagerACL
                 return $this->acl->getAccessLevel($this->disk, $value) === 0;
             }, null);
 
-        if ($checkDirs || $checkFiles) {
-            return false;
-        }
-
-        return true;
+        return ! ($checkDirs || $checkFiles);
     }
 
     /**
@@ -351,13 +325,7 @@ class FileManagerACL
                 : dirname($this->path);
         }
 
-        if (
-            $this->acl->getAccessLevel($this->disk, $pathToWrite) !== 2
-            || $this->acl->getAccessLevel($this->disk, $this->path) === 0
-        ) {
-            return false;
-        }
-
-        return true;
+        return ! ($this->acl->getAccessLevel($this->disk, $pathToWrite) !== 2
+            || $this->acl->getAccessLevel($this->disk, $this->path) === 0);
     }
 }
