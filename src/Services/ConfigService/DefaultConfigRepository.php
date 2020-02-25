@@ -81,6 +81,15 @@ class DefaultConfigRepository implements ConfigRepository
     {
         return config('file-manager.cache');
     }
+    
+    /**
+     * Default filenameSlugable is true
+     */
+    
+    public function filenameSlugable(): int
+    {
+        return config('file-manager.filenameSlugable');
+    }
 
     /**
      * File manager modules configuration
