@@ -2,6 +2,7 @@
 
 namespace Alexusmai\LaravelFileManager\Events;
 
+use Alexusmai\LaravelFileManager\Services\ConfigService\ConfigRepository;
 use Illuminate\Http\Request;
 
 class FilesUploading
@@ -31,12 +32,13 @@ class FilesUploading
      *
      * @param Request $request
      */
-    public function __construct(Request $request)
+    public function __construct(Request $request, ConfigRepository $configRepository)
     {
         $this->disk = $request->input('disk');
         $this->path = $request->input('path');
         $this->files = $request->file('files');
         $this->overwrite = $request->input('overwrite');
+        $this->configRepository = $configRepository;
     }
 
     /**
@@ -61,9 +63,16 @@ class FilesUploading
     public function files()
     {
         return array_map(function ($file) {
+
+            if ($this->configRepository->filenameSlugable()) {
+                $filename = \Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) . '.' . $file->getClientOriginalExtension();
+            } else {
+                $filename = $file->getClientOriginalName();
+            }
+
             return [
-                'name'      => $file->getClientOriginalName(),
-                'path'      => $this->path.'/'.$file->getClientOriginalName(),
+                'name' => $file->getClientOriginalName(),
+                'path' => $this->path . '/' . $file->getClientOriginalName(),
                 'extension' => $file->extension(),
             ];
         }, $this->files);
