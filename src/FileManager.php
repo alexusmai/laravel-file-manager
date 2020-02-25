@@ -139,10 +139,19 @@ class FileManager
         $fileNotUploaded = false;
 
         foreach ($files as $file) {
+            
+            //create slugable filename
+            if ($this->configRepository->filenameSlugable()) {
+                $filename = \Str::slug(pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)) . '.' . $file->getClientOriginalExtension();
+            } else {
+                $filename = $file->getClientOriginalName();
+            }
+            
+            
             // skip or overwrite files
             if (!$overwrite
                 && Storage::disk($disk)
-                    ->exists($path.'/'.$file->getClientOriginalName())
+                    ->exists($path.'/'. $filename)
             ) {
                 continue;
             }
@@ -170,7 +179,7 @@ class FileManager
             Storage::disk($disk)->putFileAs(
                 $path,
                 $file,
-                $file->getClientOriginalName()
+                $filename
             );
         }
 
