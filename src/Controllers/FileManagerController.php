@@ -19,6 +19,7 @@ use Alexusmai\LaravelFileManager\FileManager;
 use Alexusmai\LaravelFileManager\Services\Zip;
 use Illuminate\Routing\Controller;
 use Illuminate\Http\Request;
+use Alexusmai\LaravelFileManager\Services\ConfigService\ConfigRepository;
 
 class FileManagerController extends Controller
 {
@@ -109,9 +110,9 @@ class FileManagerController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function upload(RequestValidator $request)
+    public function upload(RequestValidator $request,ConfigRepository $configRepository )
     {
-        event(new FilesUploading($request));
+        event(new FilesUploading($request,$configRepository));
 
         $uploadResponse = $this->fm->upload(
             $request->input('disk'),
@@ -120,7 +121,7 @@ class FileManagerController extends Controller
             $request->input('overwrite')
         );
 
-        event(new FilesUploaded($request));
+        event(new FilesUploaded($request,$configRepository));
 
         return response()->json($uploadResponse);
     }
