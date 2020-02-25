@@ -91,6 +91,14 @@ return [
      */
     'hiddenFiles' => true,
 
+    /**
+     * filenameSlugable
+     *
+     * for slugable filename 
+     */
+
+    'filenameSlugable' => 1,
+    
     /***************************************************************************
      * Middleware
      *
