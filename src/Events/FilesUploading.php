@@ -71,8 +71,8 @@ class FilesUploading
             }
 
             return [
-                'name' => $file->getClientOriginalName(),
-                'path' => $this->path . '/' . $file->getClientOriginalName(),
+                'name' => $filename,
+                'path' => $this->path . '/' . $filename,
                 'extension' => $file->extension(),
             ];
         }, $this->files);
