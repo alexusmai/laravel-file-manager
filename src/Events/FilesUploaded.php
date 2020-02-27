@@ -80,7 +80,9 @@ class FilesUploaded
                 'name' => $filename,
                 'path' => $this->path . '/' . $filename,
                 'extension' => $file->extension(),
+                'size' => $file->getSize(),
             ];
+            
         }, $this->files);
     }
 
