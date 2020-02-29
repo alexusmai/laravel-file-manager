@@ -265,7 +265,7 @@ class FileManagerACL
 
         // need r/w access
         return ! ($this->acl->getAccessLevel($this->disk, $oldPath) !== 2
-            && $this->acl->getAccessLevel($this->disk, $newPath) !== 2);
+            || $this->acl->getAccessLevel($this->disk, $newPath) !== 2);
     }
 
     /**
