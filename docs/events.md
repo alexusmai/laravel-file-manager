@@ -1,5 +1,19 @@
 # Events
 
+### BeforeInitialization
+
+> Alexusmai\LaravelFileManager\Events\DBeforeInitialization
+
+Example:
+
+```php
+\Event::listen('Alexusmai\LaravelFileManager\Events\BeforeInitialization',
+    function ($event) {
+        
+    }
+);
+```
+
 ### DiskSelected
 
 > Alexusmai\LaravelFileManager\Events\DiskSelected
