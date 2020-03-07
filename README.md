@@ -12,6 +12,8 @@
 
 **Vue.js Frontend:** [alexusmai/vue-laravel-file-manager](https://github.com/alexusmai/vue-laravel-file-manager)
 
+**--- Laravel 7 support added but not fully tested!! ---**
+
 ## Documentation
 
 [Laravel File Manager Docs](./docs/index.md)
@@ -64,7 +66,7 @@
 * Events (v2.2)
 * Thumbnails lazy load
 * Dynamic configuration (v2.4)
-* Supported locales : ru, en, ar, sr, cs, de, es, nl, zh-CN, fa, it, tr
+* Supported locales : ru, en, ar, sr, cs, de, es, nl, zh-CN, fa, it, tr, fr, pt_BR
 
 ## In a new version 2.4
 
