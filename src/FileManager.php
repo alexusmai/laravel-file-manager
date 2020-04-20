@@ -149,7 +149,7 @@ class FileManager
 
             // check file size if need
             if ($this->configRepository->getMaxUploadFileSize()
-                && $file->getClientSize() / 1024 > $this->configRepository->getMaxUploadFileSize()
+                && $file->getSize() / 1024 > $this->configRepository->getMaxUploadFileSize()
             ) {
                 $fileNotUploaded = true;
                 continue;

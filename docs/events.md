@@ -2,7 +2,7 @@
 
 ### BeforeInitialization
 
-> Alexusmai\LaravelFileManager\Events\DBeforeInitialization
+> Alexusmai\LaravelFileManager\Events\BeforeInitialization
 
 Example:
 
