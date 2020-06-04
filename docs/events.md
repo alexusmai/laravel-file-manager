@@ -102,6 +102,7 @@ Example:
         \Log::info('Paste:', [
             $event->disk(),
             $event->path(),
+            $event->size(),
             $event->clipboard(),
         ]);
     }
@@ -134,6 +135,7 @@ Example:
         \Log::info('Download:', [
             $event->disk(),
             $event->path(),
+            $event->size(),
         ]);
     }
 );
@@ -152,6 +154,7 @@ Example:
             $event->disk(),
             $event->path(),
             $event->name(),
+            $event->size(),
         ]);
     }
 );
@@ -168,6 +171,7 @@ Example:
             $event->disk(),
             $event->path(),
             $event->name(),
+            $event->size(),
         ]);
     }
 );
@@ -184,6 +188,7 @@ Example:
             $event->disk(),
             $event->path(),
             $event->name(),
+            $event->size(),
         ]);
     }
 );
@@ -200,6 +205,7 @@ Example:
             $event->disk(),
             $event->path(),
             $event->name(),
+            $event->size(),
         ]);
     }
 );
@@ -215,6 +221,7 @@ Example:
         \Log::info('FileUpdate:', [
             $event->disk(),
             $event->path(),
+            $event->size(),
         ]);
     }
 );

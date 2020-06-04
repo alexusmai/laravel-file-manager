@@ -3,6 +3,7 @@
 namespace Alexusmai\LaravelFileManager\Events;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class Download
 {
@@ -41,5 +42,13 @@ class Download
     public function path()
     {
         return $this->path;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function size(): ?int
+    {
+        return Storage::disk($this->disk())->size($this->path());
     }
 }

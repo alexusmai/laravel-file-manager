@@ -3,6 +3,7 @@
 namespace Alexusmai\LaravelFileManager\Events;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class Deleting
 {
@@ -40,6 +41,10 @@ class Deleting
      */
     public function items()
     {
-        return $this->items;
+        return array_map(function ($item) {
+            $item['size'] = Storage::disk($this->disk())->size($item['path']);
+
+            return $item;
+        }, $this->items);
     }
 }

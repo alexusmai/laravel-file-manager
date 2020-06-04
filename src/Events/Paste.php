@@ -3,6 +3,7 @@
 namespace Alexusmai\LaravelFileManager\Events;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class Paste
 {
@@ -55,5 +56,13 @@ class Paste
     public function clipboard()
     {
         return $this->clipboard;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function size(): ?int
+    {
+        return Storage::disk($this->disk())->size($this->path());
     }
 }

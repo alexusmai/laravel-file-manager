@@ -56,4 +56,12 @@ class DirectoryCreating
     {
         return $this->name;
     }
+
+    /**
+     * @return int
+     */
+    public function size(): int
+    {
+        return 32;
+    }
 }

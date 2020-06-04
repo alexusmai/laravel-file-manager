@@ -3,6 +3,7 @@
 namespace Alexusmai\LaravelFileManager\Events;
 
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
 
 class FilesUploading
 {
@@ -60,11 +61,12 @@ class FilesUploading
      */
     public function files()
     {
-        return array_map(function ($file) {
+        return array_map(function (UploadedFile $file) {
             return [
                 'name'      => $file->getClientOriginalName(),
                 'path'      => $this->path.'/'.$file->getClientOriginalName(),
                 'extension' => $file->extension(),
+                'size'      => $file->getSize(),
             ];
         }, $this->files);
     }

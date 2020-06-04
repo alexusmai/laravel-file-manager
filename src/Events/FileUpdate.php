@@ -3,6 +3,7 @@
 namespace Alexusmai\LaravelFileManager\Events;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class FileUpdate
 {
@@ -51,5 +52,13 @@ class FileUpdate
         }
 
         return $this->file->getClientOriginalName();
+    }
+
+    /**
+     * @return int|null
+     */
+    public function size(): ?int
+    {
+        return Storage::disk($this->disk())->size($this->path());
     }
 }
