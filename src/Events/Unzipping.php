@@ -3,14 +3,18 @@
 namespace Alexusmai\LaravelFileManager\Events;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
-class Download
+class Unzipping
 {
     /**
      * @var string
      */
     private $disk;
+
+    /**
+     * @var string|null
+     */
+    private $folder;
 
     /**
      * @var string
@@ -22,8 +26,9 @@ class Download
      */
     public function __construct(Request $request)
     {
-        $this->disk = $request->input('disk');
-        $this->path = $request->input('path');
+        $this->disk   = $request->input('disk');
+        $this->folder = $request->input('folder');
+        $this->path   = $request->input('path');
     }
 
     /**
@@ -35,18 +40,18 @@ class Download
     }
 
     /**
+     * @return string|null
+     */
+    public function folder()
+    {
+        return $this->folder;
+    }
+
+    /**
      * @return string
      */
     public function path()
     {
         return $this->path;
-    }
-
-    /**
-     * @return int|null
-     */
-    public function size(): ?int
-    {
-        return Storage::disk($this->disk())->size($this->path());
     }
 }

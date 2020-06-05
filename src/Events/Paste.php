@@ -23,14 +23,12 @@ class Paste
     private $clipboard;
 
     /**
-     * Paste constructor.
-     *
      * @param Request $request
      */
     public function __construct(Request $request)
     {
-        $this->disk = $request->input('disk');
-        $this->path = $request->input('path');
+        $this->disk      = $request->input('disk');
+        $this->path      = $request->input('path');
         $this->clipboard = $request->input('clipboard');
     }
 

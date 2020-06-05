@@ -2,7 +2,6 @@
 
 namespace Alexusmai\LaravelFileManager\Events;
 
-
 class DiskSelected
 {
     /**
@@ -11,8 +10,6 @@ class DiskSelected
     private $disk;
 
     /**
-     * DiskSelected constructor.
-     *
      * @param $disk
      */
     public function __construct($disk)

@@ -3,6 +3,7 @@
 namespace Alexusmai\LaravelFileManager\Events;
 
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 
 class FileUpdate
@@ -18,13 +19,11 @@ class FileUpdate
     private $path;
 
     /**
-     * @var \Illuminate\Http\UploadedFile
+     * @var UploadedFile
      */
     private $file;
 
     /**
-     * FileUpdate constructor.
-     *
      * @param Request $request
      */
     public function __construct(Request $request)
@@ -48,7 +47,7 @@ class FileUpdate
     public function path()
     {
         if ($this->path) {
-            return $this->path.'/'.$this->file->getClientOriginalName();
+            return $this->path . '/' . $this->file->getClientOriginalName();
         }
 
         return $this->file->getClientOriginalName();

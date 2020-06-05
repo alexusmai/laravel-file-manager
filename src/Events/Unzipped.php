@@ -2,6 +2,4 @@
 
 namespace Alexusmai\LaravelFileManager\Events;
 
-class BeforeInitialization
-{
-}
+class Unzipped extends Unzipping {}

@@ -15,6 +15,10 @@ use Alexusmai\LaravelFileManager\Events\FilesUploading;
 use Alexusmai\LaravelFileManager\Events\FileUpdate;
 use Alexusmai\LaravelFileManager\Events\Paste;
 use Alexusmai\LaravelFileManager\Events\Rename;
+use Alexusmai\LaravelFileManager\Events\Unzipped;
+use Alexusmai\LaravelFileManager\Events\Unzipping;
+use Alexusmai\LaravelFileManager\Events\Zipped;
+use Alexusmai\LaravelFileManager\Events\Zipping;
 use Alexusmai\LaravelFileManager\Requests\RequestValidator;
 use Alexusmai\LaravelFileManager\FileManager;
 use Alexusmai\LaravelFileManager\Services\Zip;
@@ -346,7 +350,13 @@ class FileManagerController extends Controller
      */
     public function zip(RequestValidator $request, Zip $zip)
     {
-        return $zip->create();
+        event(new Zipping($request));
+
+        $response = $zip->create();
+
+        event(new Zipped($request));
+
+        return $response;
     }
 
     /**
@@ -359,7 +369,13 @@ class FileManagerController extends Controller
      */
     public function unzip(RequestValidator $request, Zip $zip)
     {
-        return $zip->extract();
+        event(new Unzipping($request));
+
+        $response = $zip->extract();
+
+        event(new Unzipped($request));
+
+        return $response;
     }
 
     /**

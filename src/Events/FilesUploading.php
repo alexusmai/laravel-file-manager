@@ -18,7 +18,7 @@ class FilesUploading
     private $path;
 
     /**
-     * @var \Illuminate\Http\UploadedFile
+     * @var UploadedFile
      */
     private $files;
 
@@ -28,19 +28,18 @@ class FilesUploading
     private $overwrite;
 
     /**
-     * FilesUploading constructor.
-     *
      * @param Request $request
      */
     public function __construct(Request $request)
     {
-        $this->disk = $request->input('disk');
-        $this->path = $request->input('path');
-        $this->files = $request->file('files');
+        $this->disk      = $request->input('disk');
+        $this->path      = $request->input('path');
+        $this->files     = $request->file('files');
         $this->overwrite = $request->input('overwrite');
     }
 
     /**
+     *
      * @return string
      */
     public function disk()
@@ -64,7 +63,7 @@ class FilesUploading
         return array_map(function (UploadedFile $file) {
             return [
                 'name'      => $file->getClientOriginalName(),
-                'path'      => $this->path.'/'.$file->getClientOriginalName(),
+                'path'      => $this->path . '/' . $file->getClientOriginalName(),
                 'extension' => $file->extension(),
                 'size'      => $file->getSize(),
             ];

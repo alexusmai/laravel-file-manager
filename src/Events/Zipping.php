@@ -4,7 +4,7 @@ namespace Alexusmai\LaravelFileManager\Events;
 
 use Illuminate\Http\Request;
 
-class DirectoryCreating
+class Zipping
 {
     /**
      * @var string
@@ -12,9 +12,9 @@ class DirectoryCreating
     private $disk;
 
     /**
-     * @var string
+     * @var array
      */
-    private $path;
+    private $elements;
 
     /**
      * @var string
@@ -22,13 +22,19 @@ class DirectoryCreating
     private $name;
 
     /**
+     * @var string|null
+     */
+    private $path;
+
+    /**
      * @param Request $request
      */
     public function __construct(Request $request)
     {
-        $this->disk = $request->input('disk');
-        $this->path = $request->input('path');
-        $this->name = $request->input('name');
+        $this->disk     = $request->input('disk');
+        $this->elements = $request->input('elements');
+        $this->name     = $request->input('name');
+        $this->path     = $request->input('path');
     }
 
     /**
@@ -40,26 +46,26 @@ class DirectoryCreating
     }
 
     /**
-     * @return string
+     * @return array
      */
-    public function path()
+    public function elements(): array
     {
-        return $this->path;
+        return $this->elements;
     }
 
     /**
      * @return string
      */
-    public function name()
+    public function name(): string
     {
         return $this->name;
     }
 
     /**
-     * @return int
+     * @return string|null
      */
-    public function size(): int
+    public function path()
     {
-        return 32;
+        return $this->path;
     }
 }

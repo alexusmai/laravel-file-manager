@@ -22,13 +22,11 @@ class Rename
     private $oldName;
 
     /**
-     * Rename constructor.
-     *
      * @param Request $request
      */
     public function __construct(Request $request)
     {
-        $this->disk = $request->input('disk');
+        $this->disk    = $request->input('disk');
         $this->newName = $request->input('newName');
         $this->oldName = $request->input('oldName');
     }

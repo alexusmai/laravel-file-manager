@@ -2,7 +2,6 @@
 
 namespace Alexusmai\LaravelFileManager\Events;
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 class Deleted
@@ -18,13 +17,12 @@ class Deleted
     private $items;
 
     /**
-     * Deleted constructor.
-     *
-     * @param Request $request
+     * @param $disk
+     * @param $items
      */
     public function __construct($disk, $items)
     {
-        $this->disk = $disk;
+        $this->disk  = $disk;
         $this->items = $items;
     }
 

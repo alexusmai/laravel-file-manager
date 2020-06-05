@@ -226,3 +226,69 @@ Example:
     }
 );
 ```
+
+### Zipping
+
+> Alexusmai\LaravelFileManager\Events\Zipping
+
+```php
+\Event::listen('Alexusmai\LaravelFileManager\Events\Zipping',
+    function ($event) {
+        \Log::info('Zipping:', [
+            $event->disk(),
+            $event->elements(),
+            $event->name(),
+            $event->path(),
+        ]);
+    }
+);
+```
+
+### Zipped
+
+> Alexusmai\LaravelFileManager\Events\Zipped
+
+```php
+\Event::listen('Alexusmai\LaravelFileManager\Events\Zipped',
+    function ($event) {
+        \Log::info('Zipped:', [
+            $event->disk(),
+            $event->elements(),
+            $event->name(),
+            $event->path(),
+        ]);
+    }
+);
+```
+
+### Unzipping
+
+> Alexusmai\LaravelFileManager\Events\Unzipping
+
+```php
+\Event::listen('Alexusmai\LaravelFileManager\Events\Unzipping',
+    function ($event) {
+        \Log::info('Unzipping:', [
+            $event->disk(),
+            $event->folder(),
+            $event->path(),
+        ]);
+    }
+);
+```
+
+### Unzipped
+
+> Alexusmai\LaravelFileManager\Events\Unzipped
+
+```php
+\Event::listen('Alexusmai\LaravelFileManager\Events\Unzipped',
+    function ($event) {
+        \Log::info('Unzipped:', [
+            $event->disk(),
+            $event->folder(),
+            $event->path(),
+        ]);
+    }
+);
+```

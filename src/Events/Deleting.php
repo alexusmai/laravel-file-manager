@@ -18,13 +18,11 @@ class Deleting
     private $items;
 
     /**
-     * Deleting constructor.
-     *
      * @param Request $request
      */
     public function __construct(Request $request)
     {
-        $this->disk = $request->input('disk');
+        $this->disk  = $request->input('disk');
         $this->items = $request->input('items');
     }
 
