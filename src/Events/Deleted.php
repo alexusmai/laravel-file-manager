@@ -39,10 +39,6 @@ class Deleted
      */
     public function items()
     {
-        return array_map(function ($item) {
-            $item['size'] = Storage::disk($this->disk())->size($item['path']);
-
-            return $item;
-        }, $this->items);
+        return $this->items;
     }
 }
