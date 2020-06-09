@@ -2,6 +2,7 @@
 
 namespace Alexusmai\LaravelFileManager\Controllers;
 
+use Alexusmai\LaravelFileManager\Events\AfterInitialization;
 use Alexusmai\LaravelFileManager\Events\BeforeInitialization;
 use Alexusmai\LaravelFileManager\Events\Deleting;
 use Alexusmai\LaravelFileManager\Events\DirectoryCreated;
@@ -51,9 +52,13 @@ class FileManagerController extends Controller
     {
         event(new BeforeInitialization());
 
-        return response()->json(
+        $initializeResponse = response()->json(
             $this->fm->initialize()
         );
+
+        event(new AfterInitialization());
+
+        return $initializeResponse;
     }
 
     /**

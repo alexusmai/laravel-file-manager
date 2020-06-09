@@ -14,6 +14,20 @@ Example:
 );
 ```
 
+### AfterInitialization
+
+> Alexusmai\LaravelFileManager\Events\AfterInitialization
+
+Example:
+
+```php
+\Event::listen('Alexusmai\LaravelFileManager\Events\AfterInitialization',
+    function ($event) {
+        
+    }
+);
+```
+
 ### DiskSelected
 
 > Alexusmai\LaravelFileManager\Events\DiskSelected
