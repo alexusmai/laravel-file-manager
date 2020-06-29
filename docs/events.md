@@ -119,6 +119,7 @@ Example:
             $event->disk(),
             $event->newName(),
             $event->oldName(),
+            $event->type(), // 'file' or 'dir'
         ]);
     }
 );

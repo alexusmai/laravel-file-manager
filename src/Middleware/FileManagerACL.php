@@ -58,8 +58,8 @@ class FileManagerACL
     /**
      * FileManagerACL constructor.
      *
-     * @param Request $request
-     * @param ACL     $acl
+     * @param  Request  $request
+     * @param  ACL  $acl
      */
     public function __construct(Request $request, ACL $acl)
     {
@@ -74,8 +74,8 @@ class FileManagerACL
     /**
      * Handle an incoming request.
      *
-     * @param  \Illuminate\Http\Request $request
-     * @param  \Closure                 $next
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \Closure  $next
      *
      * @return mixed
      */
@@ -84,13 +84,13 @@ class FileManagerACL
         $routeName = $request->route()->getName();
 
         // if ACL is OFF or route name wasn't found
-        if (!resolve(ConfigRepository::class)->getAcl()
-            || !array_key_exists($routeName, self::CHECKERS)
+        if ( ! resolve(ConfigRepository::class)->getAcl()
+            || ! array_key_exists($routeName, self::CHECKERS)
         ) {
             return $next($request);
         }
 
-        if (!call_user_func([$this, self::CHECKERS[$routeName]])) {
+        if ( ! call_user_func([$this, self::CHECKERS[$routeName]])) {
             return $this->errorMessage();
         }
 
@@ -207,8 +207,7 @@ class FileManagerACL
         $firstFall = Arr::first($this->request->input('items'),
             function ($value) {
                 // need r/w access
-                return $this->acl->getAccessLevel($this->disk, $value['path'])
-                    !== 2;
+                return $this->acl->getAccessLevel($this->disk, $value['path']) !== 2;
             }, null);
 
         if ($firstFall) {
@@ -234,14 +233,12 @@ class FileManagerACL
         // can user copy or cut selected files and folders
         $checkDirs = Arr::first($clipboard['directories'],
             function ($value) use ($clipboard, $getLevel) {
-                return $this->acl->getAccessLevel($clipboard['disk'], $value)
-                    < $getLevel;
+                return $this->acl->getAccessLevel($clipboard['disk'], $value) < $getLevel;
             }, null);
 
         $checkFiles = Arr::first($clipboard['files'],
             function ($value) use ($clipboard, $getLevel) {
-                return $this->acl->getAccessLevel($clipboard['disk'], $value)
-                    < $getLevel;
+                return $this->acl->getAccessLevel($clipboard['disk'], $value) < $getLevel;
             }, null);
 
         // can user write to selected folder?
