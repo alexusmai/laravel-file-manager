@@ -21,6 +21,8 @@ use Alexusmai\LaravelFileManager\Services\Zip;
 use Illuminate\Routing\Controller;
 use Illuminate\Http\Request;
 
+use function GuzzleHttp\Promise\all;
+
 class FileManagerController extends Controller
 {
     /**

@@ -12,8 +12,6 @@
 
 **Vue.js Frontend:** [alexusmai/vue-laravel-file-manager](https://github.com/alexusmai/vue-laravel-file-manager)
 
-**--- Laravel 7 support added but not fully tested!! ---**
-
 ## Documentation
 
 [Laravel File Manager Docs](./docs/index.md)
@@ -66,32 +64,25 @@
 * Events (v2.2)
 * Thumbnails lazy load
 * Dynamic configuration (v2.4)
-* Supported locales : ru, en, ar, sr, cs, de, es, nl, zh-CN, fa, it, tr, fr, pt_BR
+* Supported locales : ru, en, ar, sr, cs, de, es, nl, zh-CN, fa, it, tr, fr, pt-BR, zh-TW
 
-## In a new version 2.4
+## In a new version 2.5
 
-Now you can create your own config repositories, it will allow to change your configuration dynamically.
-
-How to do it:
-
-Create new class - example - TestConfigRepository
+You can change Route prefix (default - 'file-manager')
 
 ```php
-namespace App\Http;
-
-use Alexusmai\LaravelFileManager\Services\ConfigService\ConfigRepository;
-
-class TestConfigRepository implements ConfigRepository
-{
-    // implement all methods from interface
-}
+/**
+ * LFM Route prefix
+ * !!! WARNING - if you change it, you should compile frontend with new prefix(baseUrl) !!!
+ */
+'routePrefix' => 'file-manager',
 ```
 
-For example see [src/Services/ConfigService/DefaultConfigRepository.php](https://github.com/alexusmai/laravel-file-manager/blob/master/src/Services/ConfigService/DefaultConfigRepository.php)
+Open PDF files in a new tab (test) - use 'double-click'
 
-## Upgrading to version 2.4
+## Upgrading to version 2.5
 
-Update pre-compiled css and js files and config file - file-manager.php 
+Update pre-compiled css and js files and config file (backup your settings first!!) - file-manager.php 
 
 
 ```php
@@ -100,24 +91,4 @@ php artisan vendor:publish --tag=fm-config --force
 // js, css
 php artisan vendor:publish --tag=fm-assets --force
 ```
-
-If you use the ACL, now you don't need to add the acl middleware to configuration.
-
-```php
-//======= In old versions ==========
-'acl' => true,
-
-// add acl middleware to your array
-'middleware' => ['web', 'fm-acl'],
-
-//======= In a new version =========
-'acl' => true,
-
-'middleware' => ['web'],
-```
-
-## Contributors
-
-[![](https://sourcerer.io/fame/alexusmai/alexusmai/laravel-file-manager/images/0)](https://sourcerer.io/fame/alexusmai/alexusmai/laravel-file-manager/links/0)[![](https://sourcerer.io/fame/alexusmai/alexusmai/laravel-file-manager/images/1)](https://sourcerer.io/fame/alexusmai/alexusmai/laravel-file-manager/links/1)[![](https://sourcerer.io/fame/alexusmai/alexusmai/laravel-file-manager/images/2)](https://sourcerer.io/fame/alexusmai/alexusmai/laravel-file-manager/links/2)[![](https://sourcerer.io/fame/alexusmai/alexusmai/laravel-file-manager/images/3)](https://sourcerer.io/fame/alexusmai/alexusmai/laravel-file-manager/links/3)[![](https://sourcerer.io/fame/alexusmai/alexusmai/laravel-file-manager/images/4)](https://sourcerer.io/fame/alexusmai/alexusmai/laravel-file-manager/links/4)[![](https://sourcerer.io/fame/alexusmai/alexusmai/laravel-file-manager/images/5)](https://sourcerer.io/fame/alexusmai/alexusmai/laravel-file-manager/links/5)[![](https://sourcerer.io/fame/alexusmai/alexusmai/laravel-file-manager/images/6)](https://sourcerer.io/fame/alexusmai/alexusmai/laravel-file-manager/links/6)[![](https://sourcerer.io/fame/alexusmai/alexusmai/laravel-file-manager/images/7)](https://sourcerer.io/fame/alexusmai/alexusmai/laravel-file-manager/links/7)
-
 

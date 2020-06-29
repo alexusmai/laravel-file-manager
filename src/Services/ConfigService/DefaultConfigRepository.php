@@ -10,6 +10,17 @@ namespace Alexusmai\LaravelFileManager\Services\ConfigService;
 class DefaultConfigRepository implements ConfigRepository
 {
     /**
+     * LFM Route prefix
+     * !!! WARNING - if you change it, you should compile frontend with new prefix(baseUrl) !!!
+     *
+     * @return string
+     */
+    public function getRoutePrefix(): string
+    {
+        return config('file-manager.routePrefix');
+    }
+
+    /**
      * Get disk list
      *
      * ['public', 'local', 's3']
