@@ -6,6 +6,12 @@ use Alexusmai\LaravelFileManager\Services\ACLService\ConfigACLRepository;
 return [
 
     /**
+     * LFM Route prefix
+     * !!! WARNING - if you change it, you should compile frontend with new prefix(baseUrl) !!!
+     */
+    'routePrefix' => 'file-manager',    
+    
+    /**
      * Set Config repository
      *
      * Default - DefaultConfigRepository get config from this file
