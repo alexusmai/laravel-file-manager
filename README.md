@@ -82,13 +82,29 @@ Open PDF files in a new tab (test) - use 'double-click'
 
 ## Upgrading to version 2.5
 
-Update pre-compiled css and js files and config file (backup your settings first!!) - file-manager.php 
+Before updating the package, you may need to delete the settings file (config/file-manager.php) or you can add a new element to it:
+
+```php
+/**
+     * LFM Route prefix
+     * !!! WARNING - if you change it, you should compile frontend with new prefix(baseUrl) !!!
+     */
+    'routePrefix' => 'file-manager',
+
+```
+
+If you choose to delete - do not forget to backup your settings!
+
+Run composer update command.
+
+Update pre-compiled css and js files.
 
 
 ```php
-// config
-php artisan vendor:publish --tag=fm-config --force
-// js, css
 php artisan vendor:publish --tag=fm-assets --force
 ```
 
+And config file IF YOU DELETED IT !!!
+```php
+php artisan vendor:publish --tag=fm-assets --force
+```
