@@ -5,7 +5,7 @@
     composer require alexusmai/laravel-file-manager
     ```
 
-2. If you use Laravel 5.4, then add service provider to config/app.php (for the Laravel 5.5 and higher skip this step):
+2. If you use Laravel 5.4 or higher, then add service provider to config/app.php (for the Laravel 5.5 and higher skip this step):
 
     ```php
     Alexusmai\LaravelFileManager\FileManagerServiceProvider::class,
