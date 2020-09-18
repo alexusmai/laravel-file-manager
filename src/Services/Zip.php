@@ -2,6 +2,10 @@
 
 namespace Alexusmai\LaravelFileManager\Services;
 
+use Alexusmai\LaravelFileManager\Events\UnzipCreated;
+use Alexusmai\LaravelFileManager\Events\UnzipFailed;
+use Alexusmai\LaravelFileManager\Events\ZipCreated;
+use Alexusmai\LaravelFileManager\Events\ZipFailed;
 use Illuminate\Http\Request;
 use RecursiveIteratorIterator;
 use RecursiveDirectoryIterator;
@@ -112,8 +116,12 @@ class Zip
 
             $this->zip->close();
 
+            event(new ZipCreated($this->request));
+
             return true;
         }
+
+        event(new ZipFailed($this->request));
 
         return false;
     }
@@ -136,8 +144,12 @@ class Zip
             $this->zip->extractTo($folder ? $rootPath.'/'.$folder : $rootPath);
             $this->zip->close();
 
+            event(new UnzipCreated($this->request));
+
             return true;
         }
+
+        event(new UnzipFailed($this->request));
 
         return false;
     }

@@ -4,7 +4,7 @@ namespace Alexusmai\LaravelFileManager\Events;
 
 use Illuminate\Http\Request;
 
-class Rename
+class Zip
 {
     /**
      * @var string
@@ -14,29 +14,29 @@ class Rename
     /**
      * @var string
      */
-    private $newName;
+    private $path;
 
     /**
      * @var string
      */
-    private $oldName;
+    private $name;
 
     /**
-     * @var string
+     * @var array|string|null
      */
-    private $type;
+    private $elements;
 
     /**
-     * Rename constructor.
+     * Zip constructor.
      *
      * @param  Request  $request
      */
     public function __construct(Request $request)
     {
         $this->disk = $request->input('disk');
-        $this->newName = $request->input('newName');
-        $this->oldName = $request->input('oldName');
-        $this->type = $request->input('type');
+        $this->path = $request->input('path');
+        $this->name = $request->input('name');
+        $this->elements = $request->input('elements');
     }
 
     /**
@@ -50,29 +50,24 @@ class Rename
     /**
      * @return string
      */
-    public function newName()
+    public function path()
     {
-        return $this->newName;
+        return $this->path;
     }
 
     /**
      * @return string
      */
-    public function oldName()
+    public function name()
     {
-        return $this->oldName;
+        return $this->name;
     }
 
     /**
-     * @return string
+     * @return array|string|null
      */
-    public function type()
+    public function elements()
     {
-        /*
-         *   $info = Storage::disk($this->disk)->getMetadata($this->oldName);
-         *   return $info['type'];
-         */
-
-        return $this->type;
+        return $this->elements;
     }
 }

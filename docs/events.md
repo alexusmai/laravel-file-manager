@@ -220,3 +220,102 @@ Example:
     }
 );
 ```
+
+### Zip
+
+> Alexusmai\LaravelFileManager\Events\Zip
+
+```php
+\Event::listen('Alexusmai\LaravelFileManager\Events\Zip',
+    function ($event) {
+        \Log::info('Zip:', [
+            $event->disk(),
+            $event->path(),
+            $event->name(),
+            $event->elements(),
+        ]);
+    }
+);
+```
+
+### ZipCreated
+
+> Alexusmai\LaravelFileManager\Events\ZipCreated
+
+```php
+\Event::listen('Alexusmai\LaravelFileManager\Events\ZipCreated',
+    function ($event) {
+        \Log::info('ZipCreated:', [
+            $event->disk(),
+            $event->path(),
+            $event->name(),
+            $event->elements(),
+        ]);
+    }
+);
+```
+
+### ZipFailed
+
+> Alexusmai\LaravelFileManager\Events\ZipCreated
+
+```php
+\Event::listen('Alexusmai\LaravelFileManager\Events\ZipFailed',
+    function ($event) {
+        \Log::info('ZipFailed:', [
+            $event->disk(),
+            $event->path(),
+            $event->name(),
+            $event->elements(),
+        ]);
+    }
+);
+```
+
+### Unzip
+
+> Alexusmai\LaravelFileManager\Events\Unzip
+
+```php
+\Event::listen('Alexusmai\LaravelFileManager\Events\Unzip',
+    function ($event) {
+        \Log::info('Unzip:', [
+            $event->disk(),
+            $event->path(),
+            $event->folder(),
+        ]);
+    }
+);
+```
+
+### UnzipCreated
+
+> Alexusmai\LaravelFileManager\Events\UnzipCreated
+
+```php
+\Event::listen('Alexusmai\LaravelFileManager\Events\UnzipCreated',
+    function ($event) {
+        \Log::info('UnzipCreated:', [
+            $event->disk(),
+            $event->path(),
+            $event->folder(),
+        ]);
+    }
+);
+```
+
+### UnzipFailed
+
+> Alexusmai\LaravelFileManager\Events\UnzipFailed
+
+```php
+\Event::listen('Alexusmai\LaravelFileManager\Events\UnzipFailed',
+    function ($event) {
+        \Log::info('UnzipFailed:', [
+            $event->disk(),
+            $event->path(),
+            $event->folder(),
+        ]);
+    }
+);
+```
