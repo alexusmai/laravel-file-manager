@@ -15,13 +15,13 @@ use Alexusmai\LaravelFileManager\Events\FilesUploading;
 use Alexusmai\LaravelFileManager\Events\FileUpdate;
 use Alexusmai\LaravelFileManager\Events\Paste;
 use Alexusmai\LaravelFileManager\Events\Rename;
+use Alexusmai\LaravelFileManager\Events\Zip as ZipEvent;
+use Alexusmai\LaravelFileManager\Events\Unzip as UnzipEvent;
 use Alexusmai\LaravelFileManager\Requests\RequestValidator;
 use Alexusmai\LaravelFileManager\FileManager;
 use Alexusmai\LaravelFileManager\Services\Zip;
 use Illuminate\Routing\Controller;
 use Illuminate\Http\Request;
-
-use function GuzzleHttp\Promise\all;
 
 class FileManagerController extends Controller
 {
@@ -348,11 +348,13 @@ class FileManagerController extends Controller
      */
     public function zip(RequestValidator $request, Zip $zip)
     {
+        event(new ZipEvent($request));
+
         return $zip->create();
     }
 
     /**
-     * Extract zip atchive
+     * Extract zip archive
      *
      * @param RequestValidator $request
      * @param Zip              $zip
@@ -361,6 +363,8 @@ class FileManagerController extends Controller
      */
     public function unzip(RequestValidator $request, Zip $zip)
     {
+        event(new UnzipEvent($request));
+
         return $zip->extract();
     }
 
