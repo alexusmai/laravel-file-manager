@@ -1,5 +1,6 @@
 <?php
 
+use Alexusmai\LaravelFileManager\Controllers\FileManagerController;
 use Alexusmai\LaravelFileManager\Services\ConfigService\DefaultConfigRepository;
 use Alexusmai\LaravelFileManager\Services\ACLService\ConfigACLRepository;
 
@@ -18,6 +19,13 @@ return [
      * Default - ConfigACLRepository (see rules in - aclRules)
      */
     'aclRepository' => ConfigACLRepository::class,
+
+    /**
+     * Set default controller
+     *
+     * Default - FileManagerController
+     */
+    'controller' => FileManagerController::class,
 
     //********* Default configuration for DefaultConfigRepository **************
 

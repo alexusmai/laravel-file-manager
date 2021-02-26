@@ -160,4 +160,15 @@ interface ConfigRepository
      * @return int|null
      */
     public function getAclRulesCache(): ?int;
+
+    /**
+     * Get controller
+     *
+     * default - config('file-manager.controller')
+     *
+     * @return string
+     */
+    public function getController(): string;
+
+
 }

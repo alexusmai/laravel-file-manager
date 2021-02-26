@@ -211,4 +211,15 @@ class DefaultConfigRepository implements ConfigRepository
     {
         return config('file-manager.aclRulesCache');
     }
+
+
+    /**
+     * Get controller
+     *
+     * @return string
+     */
+    public function getController(): string
+    {
+        return config('file-manager.controller');
+    }
 }
