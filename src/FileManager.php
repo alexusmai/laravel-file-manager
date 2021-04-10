@@ -69,7 +69,7 @@ class FileManager
         }
 
         // get language
-        $config['lang'] = app()->getLocale();
+        $config['lang'] = config('file-manager.lang') ?: app()->getLocale();
 
         return [
             'result' => [
