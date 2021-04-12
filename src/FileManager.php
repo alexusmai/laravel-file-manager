@@ -262,13 +262,29 @@ class FileManager
      * @param $disk
      * @param $newName
      * @param $oldName
+     * @param $type
      *
      * @return array
      */
-    public function rename($disk, $newName, $oldName)
+    public function rename($disk, $newName, $oldName, $type)
     {
-        Storage::disk($disk)->move($oldName, $newName);
+        if($type == "dir") {
 
+            if (Storage::disk($disk)->has($oldName)) {
+                $folderContents = Storage::disk($disk)->listContents($oldName, true);
+                foreach ($folderContents as $content) {
+                    if ($content['type'] === 'file') {
+                        $src  = $content['path'];
+                        $dest = str_replace($oldName, $newName, $content['path']);
+                        Storage::disk($disk)->move($src, $dest);
+                    }
+                }
+                Storage::disk($disk)->deleteDirectory($oldName);
+            }
+        }else {
+            Storage::disk($disk)->move($oldName, $newName);
+        }
+        
         return [
             'result' => [
                 'status'  => 'success',
