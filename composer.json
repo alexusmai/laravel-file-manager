@@ -1,5 +1,5 @@
 {
-    "name": "alexusmai/laravel-file-manager",
+    "name": "ciaompe/laravel-file-manager",
     "description": "File manager for Laravel",
     "keywords": [
         "laravel",
@@ -13,7 +13,7 @@
             "role": "Developer"
         }
     ],
-    "homepage": "https://github.com/alexusami/laravel-file-manager",
+    "homepage": "https://github.com/ciaompe/laravel-file-manager",
     "license": "MIT",
     "minimum-stability": "dev",
     "require": {

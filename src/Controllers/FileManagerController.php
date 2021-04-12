@@ -184,7 +184,8 @@ class FileManagerController extends Controller
             $this->fm->rename(
                 $request->input('disk'),
                 $request->input('newName'),
-                $request->input('oldName')
+                $request->input('oldName'),
+                $request->input('type')
             )
         );
     }
