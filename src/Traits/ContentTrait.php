@@ -209,7 +209,15 @@ trait ContentTrait
 
         $withAccess = array_map(function ($item) use ($acl, $disk) {
             // add acl access level
-            $item['acl'] = $acl->getAccessLevel($disk, $item['path']);
+           //$item['acl'] = $acl->getAccessLevel($disk, $item['path']);
+            $company_id = User::getCurCompanyId();
+            if(strpos( $item['path'], "company_".$company_id ) === 0){
+                $item['acl'] = 2; //$acl->getAccessLevel($disk, $item['path']);
+            }
+            else{
+                $item['acl'] = 0;
+            }
+            
 
             return $item;
         }, $content);
