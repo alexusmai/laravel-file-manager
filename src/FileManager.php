@@ -212,6 +212,7 @@ class FileManager
                 if ($item['type'] === 'dir') {
                     // delete directory
                     Storage::disk($disk)->deleteDirectory($item['path']);
+                    Content::deleteDir($item['path']);
                 } else {
                     // delete file
                     Storage::disk($disk)->delete($item['path']);
