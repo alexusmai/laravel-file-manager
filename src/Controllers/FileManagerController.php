@@ -14,6 +14,8 @@ use Alexusmai\LaravelFileManager\Events\FilesUploaded;
 use Alexusmai\LaravelFileManager\Events\FilesUploading;
 use Alexusmai\LaravelFileManager\Events\FileUpdate;
 use Alexusmai\LaravelFileManager\Events\Paste;
+use Alexusmai\LaravelFileManager\Events\Pasting;
+use Alexusmai\LaravelFileManager\Events\Pasted;
 use Alexusmai\LaravelFileManager\Events\Rename;
 use Alexusmai\LaravelFileManager\Events\Zip as ZipEvent;
 use Alexusmai\LaravelFileManager\Events\Unzip as UnzipEvent;
@@ -159,14 +161,18 @@ class FileManagerController extends Controller
     public function paste(RequestValidator $request)
     {
         event(new Paste($request));
+        event(new Pasting($request));
 
-        return response()->json(
-            $this->fm->paste(
+	    $pasteReponse = $this->fm->paste(
                 $request->input('disk'),
                 $request->input('path'),
-                $request->input('clipboard')
-            )
-        );
+                $request->input('clipboard'));
+	
+        if ($pasteReponse['result']['status'] === 'success') {
+                event(new Pasted($request));
+        }
+
+        return response()->json($pasteReponse);
     }
 
     /**
@@ -179,6 +185,15 @@ class FileManagerController extends Controller
     public function rename(RequestValidator $request)
     {
         event(new Rename($request));
+
+        if(strpos($request->input('newName'),'..')!== false){
+                   return [
+                        'result' => [
+                        'status'  => 'warning',
+                        'message' => 'invalidPath'.' "'.$request->input('newName').'"',
+                       ],
+                    ];
+       }
 
         return response()->json(
             $this->fm->rename(
@@ -266,6 +281,15 @@ class FileManagerController extends Controller
     {
         event(new DirectoryCreating($request));
 
+        if(strpos($request->input('name'),'..')!== false){
+         return [
+                     'result' => [
+                     'status'  => 'warning',
+                     'message' => 'invalidPath'.' "'.$request->input('name').'"',
+                     ],
+               ];
+        }
+
         $createDirectoryResponse = $this->fm->createDirectory(
             $request->input('disk'),
             $request->input('path'),
@@ -289,6 +313,15 @@ class FileManagerController extends Controller
     public function createFile(RequestValidator $request)
     {
         event(new FileCreating($request));
+
+        if(strpos($request->input('name'),'..')!== false){
+                        return [
+                                'result' => [
+                                        'status'  => 'warning',
+                                        'message' => 'invalidPath'.' "'.$request->input('name').'"',
+                                    ],
+                            ];
+        }
 
         $createFileResponse = $this->fm->createFile(
             $request->input('disk'),
@@ -350,6 +383,15 @@ class FileManagerController extends Controller
     {
         event(new ZipEvent($request));
 
+        if(strpos($request->input('name'),'..')!== false){
+                        return [
+                                'result' => [
+                                        'status'  => 'warning',
+                                        'message' => 'invalidPath'.' "'.$request->input('name').'"',
+                                    ],
+                            ];
+        }
+
         return $zip->create();
     }
 
@@ -364,6 +406,15 @@ class FileManagerController extends Controller
     public function unzip(RequestValidator $request, Zip $zip)
     {
         event(new UnzipEvent($request));
+
+        if(strpos($request->input('folder'),'..')!== false){
+                        return [
+                                'result' => [
+                                        'status'  => 'warning',
+                                        'message' => 'invalidPath'.' "'.$request->input('folder').'"',
+                                    ],
+                            ];
+        }
 
         return $zip->extract();
     }
