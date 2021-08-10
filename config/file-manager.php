@@ -112,6 +112,15 @@ return [
      */
     'acl' => false,
 
+    
+    /** 
+     *  Uploaded object visibility
+     *  options : public, private
+     *  default to public
+     */
+    
+     'objectVisibility' => 'public',
+    
     /**
      * Hide files and folders from file-manager if user doesn't have access
      *
