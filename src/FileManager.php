@@ -170,7 +170,8 @@ class FileManager
             Storage::disk($disk)->putFileAs(
                 $path,
                 $file,
-                $file->getClientOriginalName()
+                $file->getClientOriginalName(),
+                config('file-manager.objectVisibility')
             );
         }
 
