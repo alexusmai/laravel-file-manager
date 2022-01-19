@@ -96,6 +96,10 @@ trait ContentTrait
 
         $pathInfo = pathinfo($path);
 
+        // SFTP, Get Metadata does not return path.
+        // Next line covers the SFTP case. 
+        $file['path'] = array_key_exists('path', $file) ? $file['path'] : $path;
+
         $file['basename'] = $pathInfo['basename'];
         $file['dirname'] = $pathInfo['dirname'] === '.' ? ''
             : $pathInfo['dirname'];
@@ -128,15 +132,21 @@ trait ContentTrait
         /**
          * S3 didn't return metadata for directories
          */
-        if (!$directory) {
-            $directory['path'] = $path;
-            $directory['type'] = 'dir';
-        }
+        // if (!$directory) {
+        //     $directory['path'] = $path;
+        //     $directory['type'] = 'dir';
+        // }
+
+        // SFTP, Get Metadata does not return path.
+        // Next two lines covers the SFTP case. 
+        $directory['path'] = array_key_exists('path', $directory) ? $directory['path'] : $path;
+        $directory['type'] = array_key_exists('type', $directory) ? $directory['type'] : 'dir';
 
         $directory['basename'] = $pathInfo['basename'];
         $directory['dirname'] = $pathInfo['dirname'] === '.' ? ''
             : $pathInfo['dirname'];
 
+        
         // if ACL ON
         if ($this->configRepository->getAcl()) {
             return $this->aclFilter($disk, [$directory])[0];
