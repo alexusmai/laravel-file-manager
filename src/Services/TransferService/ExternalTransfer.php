@@ -3,8 +3,9 @@
 namespace Alexusmai\LaravelFileManager\Services\TransferService;
 
 use Alexusmai\LaravelFileManager\Traits\PathTrait;
+use Illuminate\Support\Facades\Storage;
+use League\Flysystem\FilesystemException;
 use League\Flysystem\MountManager;
-use Storage;
 
 class ExternalTransfer extends Transfer
 {
@@ -35,7 +36,8 @@ class ExternalTransfer extends Transfer
     /**
      * Copy files and folders
      *
-     * @throws \League\Flysystem\FileExistsException
+     * @return void
+     * @throws FilesystemException
      */
     protected function copy()
     {
@@ -56,7 +58,8 @@ class ExternalTransfer extends Transfer
     /**
      * Cut files and folders
      *
-     * @throws \League\Flysystem\FileExistsException
+     * @return void
+     * @throws FilesystemException
      */
     protected function cut()
     {
@@ -83,7 +86,8 @@ class ExternalTransfer extends Transfer
      *
      * @param $directory
      *
-     * @throws \League\Flysystem\FileExistsException
+     * @return void
+     * @throws FilesystemException
      */
     protected function copyDirectoryToDisk($directory)
     {
@@ -117,7 +121,8 @@ class ExternalTransfer extends Transfer
      * @param $filePath
      * @param $newPath
      *
-     * @throws \League\Flysystem\FileExistsException
+     * @return void
+     * @throws FilesystemException
      */
     protected function copyToDisk($filePath, $newPath)
     {
@@ -132,6 +137,9 @@ class ExternalTransfer extends Transfer
      *
      * @param $filePath
      * @param $newPath
+     *
+     * @return void
+     * @throws FilesystemException
      */
     protected function moveToDisk($filePath, $newPath)
     {

@@ -12,7 +12,7 @@ trait PathTrait
      *
      * @return string
      */
-    public function newPath($path, $name)
+    public function newPath($path, $name): string
     {
         if (!$path) {
             return $name;
@@ -29,7 +29,7 @@ trait PathTrait
      *
      * @return string
      */
-    public function renamePath($itemPath, $recipientPath)
+    public function renamePath($itemPath, $recipientPath): string
     {
         if ($recipientPath) {
             return $recipientPath.'/'.basename($itemPath);
@@ -47,7 +47,7 @@ trait PathTrait
      *
      * @return string
      */
-    public function transformPath($itemPath, $recipientPath, $partsForRemove)
+    public function transformPath($itemPath, $recipientPath, $partsForRemove): string
     {
         $elements = array_slice(explode('/', $itemPath), $partsForRemove);
 

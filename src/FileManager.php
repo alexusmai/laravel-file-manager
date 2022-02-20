@@ -8,10 +8,14 @@ use Alexusmai\LaravelFileManager\Traits\ContentTrait;
 use Alexusmai\LaravelFileManager\Traits\PathTrait;
 use Alexusmai\LaravelFileManager\Services\TransferService\TransferFactory;
 use Alexusmai\LaravelFileManager\Services\ConfigService\ConfigRepository;
+use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Support\Arr;
-use Storage;
-use Image;
+use Intervention\Image\Facades\Image;
+use League\Flysystem\FilesystemException;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class FileManager
 {
@@ -20,7 +24,7 @@ class FileManager
     /**
      * @var ConfigRepository
      */
-    public $configRepository;
+    public ConfigRepository $configRepository;
 
     /**
      * FileManager constructor.
@@ -37,9 +41,8 @@ class FileManager
      *
      * @return array
      */
-    public function initialize()
+    public function initialize(): array
     {
-        // if config not found
         if (!config()->has('file-manager')) {
             return [
                 'result' => [
@@ -87,10 +90,10 @@ class FileManager
      * @param $path
      *
      * @return array
+     * @throws FilesystemException
      */
-    public function content($disk, $path)
+    public function content($disk, $path): array
     {
-        // get content for the selected directory
         $content = $this->getContent($disk, $path);
 
         return [
@@ -110,8 +113,9 @@ class FileManager
      * @param $path
      *
      * @return array
+     * @throws FilesystemException
      */
-    public function tree($disk, $path)
+    public function tree($disk, $path): array
     {
         $directories = $this->getDirectoriesTree($disk, $path);
 
@@ -134,20 +138,17 @@ class FileManager
      *
      * @return array
      */
-    public function upload($disk, $path, $files, $overwrite)
+    public function upload($disk, $path, $files, $overwrite): array
     {
         $fileNotUploaded = false;
 
         foreach ($files as $file) {
             // skip or overwrite files
-            if (!$overwrite
-                && Storage::disk($disk)
-                    ->exists($path.'/'.$file->getClientOriginalName())
-            ) {
+            if (!$overwrite && Storage::disk($disk)->exists($path.'/'.$file->getClientOriginalName())) {
                 continue;
             }
 
-            // check file size if need
+            // check file size
             if ($this->configRepository->getMaxUploadFileSize()
                 && $file->getSize() / 1024 > $this->configRepository->getMaxUploadFileSize()
             ) {
@@ -155,7 +156,7 @@ class FileManager
                 continue;
             }
 
-            // check file type if need
+            // check file type
             if ($this->configRepository->getAllowFileTypes()
                 && !in_array(
                     $file->getClientOriginalExtension(),
@@ -174,7 +175,6 @@ class FileManager
             );
         }
 
-        // If the some file was not uploaded
         if ($fileNotUploaded) {
             return [
                 'result' => [
@@ -200,25 +200,21 @@ class FileManager
      *
      * @return array
      */
-    public function delete($disk, $items)
+    public function delete($disk, $items): array
     {
         $deletedItems = [];
 
         foreach ($items as $item) {
-            // check all files and folders - exists or no
             if (!Storage::disk($disk)->exists($item['path'])) {
                 continue;
             } else {
                 if ($item['type'] === 'dir') {
-                    // delete directory
                     Storage::disk($disk)->deleteDirectory($item['path']);
                 } else {
-                    // delete file
                     Storage::disk($disk)->delete($item['path']);
                 }
             }
 
-            // add deleted item
             $deletedItems[] = $item;
         }
 
@@ -241,7 +237,7 @@ class FileManager
      *
      * @return array
      */
-    public function paste($disk, $path, $clipboard)
+    public function paste($disk, $path, $clipboard): array
     {
         // compare disk names
         if ($disk !== $clipboard['disk']) {
@@ -265,7 +261,7 @@ class FileManager
      *
      * @return array
      */
-    public function rename($disk, $newName, $oldName)
+    public function rename($disk, $newName, $oldName): array
     {
         Storage::disk($disk)->move($oldName, $newName);
 
@@ -283,9 +279,9 @@ class FileManager
      * @param $disk
      * @param $path
      *
-     * @return mixed
+     * @return StreamedResponse
      */
-    public function download($disk, $path)
+    public function download($disk, $path): StreamedResponse
     {
         // if file name not in ASCII format
         if (!preg_match('/^[\x20-\x7e]*$/', basename($path))) {
@@ -303,12 +299,11 @@ class FileManager
      * @param $disk
      * @param $path
      *
-     * @return \Illuminate\Http\Response|mixed
-     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
+     * @return Response|mixed
+     * @throws BindingResolutionException
      */
-    public function thumbnails($disk, $path)
+    public function thumbnails($disk, $path): mixed
     {
-        // create thumbnail
         if ($this->configRepository->getCache()) {
             $thumbnail = Image::cache(function ($image) use ($disk, $path) {
                 $image->make(Storage::disk($disk)->get($path))->fit(80);
@@ -334,11 +329,9 @@ class FileManager
      * @param $path
      *
      * @return mixed
-     * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      */
-    public function preview($disk, $path)
+    public function preview($disk, $path): mixed
     {
-        // get image
         $preview = Image::make(Storage::disk($disk)->get($path));
 
         return $preview->response();
@@ -352,7 +345,7 @@ class FileManager
      *
      * @return array
      */
-    public function url($disk, $path)
+    public function url($disk, $path): array
     {
         return [
             'result' => [
@@ -374,10 +367,8 @@ class FileManager
      */
     public function createDirectory($disk, $path, $name)
     {
-        // path for new directory
         $directoryName = $this->newPath($path, $name);
 
-        // check - exist directory or no
         if (Storage::disk($disk)->exists($directoryName)) {
             return [
                 'result' => [
@@ -387,10 +378,7 @@ class FileManager
             ];
         }
 
-        // create new directory
         Storage::disk($disk)->makeDirectory($directoryName);
-
-        // get directory properties
         $directoryProperties = $this->directoryProperties(
             $disk,
             $directoryName
@@ -419,12 +407,10 @@ class FileManager
      *
      * @return array
      */
-    public function createFile($disk, $path, $name)
+    public function createFile($disk, $path, $name): array
     {
-        // path for new file
         $path = $this->newPath($path, $name);
 
-        // check - exist file or no
         if (Storage::disk($disk)->exists($path)) {
             return [
                 'result' => [
@@ -434,10 +420,7 @@ class FileManager
             ];
         }
 
-        // create new file
         Storage::disk($disk)->put($path, '');
-
-        // get file properties
         $fileProperties = $this->fileProperties($disk, $path);
 
         return [
@@ -458,19 +441,15 @@ class FileManager
      *
      * @return array
      */
-    public function updateFile($disk, $path, $file)
+    public function updateFile($disk, $path, $file): array
     {
-        // update file
         Storage::disk($disk)->putFileAs(
             $path,
             $file,
             $file->getClientOriginalName()
         );
 
-        // path for new file
         $filePath = $this->newPath($path, $file->getClientOriginalName());
-
-        // get file properties
         $fileProperties = $this->fileProperties($disk, $filePath);
 
         return [
@@ -488,9 +467,9 @@ class FileManager
      * @param $disk
      * @param $path
      *
-     * @return mixed
+     * @return StreamedResponse
      */
-    public function streamFile($disk, $path)
+    public function streamFile($disk, $path): StreamedResponse
     {
         // if file name not in ASCII format
         if (!preg_match('/^[\x20-\x7e]*$/', basename($path))) {
@@ -499,7 +478,6 @@ class FileManager
             $filename = basename($path);
         }
 
-        return Storage::disk($disk)
-            ->response($path, $filename, ['Accept-Ranges' => 'bytes']);
+        return Storage::disk($disk)->response($path, $filename, ['Accept-Ranges' => 'bytes']);
     }
 }

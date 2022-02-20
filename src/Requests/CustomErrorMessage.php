@@ -10,7 +10,7 @@ trait CustomErrorMessage
     /**
      * Validation error response
      *
-     * @param Validator $validator
+     * @param  Validator  $validator
      */
     protected function failedValidation(Validator $validator)
     {

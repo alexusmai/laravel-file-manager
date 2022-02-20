@@ -27,7 +27,7 @@ abstract class Transfer
      *
      * @return array
      */
-    public function filesTransfer()
+    public function filesTransfer(): array
     {
         try {
             // determine the type of operation

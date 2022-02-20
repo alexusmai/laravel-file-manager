@@ -4,7 +4,7 @@ namespace Alexusmai\LaravelFileManager\Services\ACLService;
 
 use Alexusmai\LaravelFileManager\Services\ConfigService\ConfigRepository;
 use Illuminate\Support\Arr;
-use Cache;
+use Illuminate\Support\Facades\Cache;
 
 class ACL
 {
@@ -40,9 +40,8 @@ class ACL
      *
      * @return int
      */
-    public function getAccessLevel($disk, $path = '/')
+    public function getAccessLevel($disk, $path = '/'): int
     {
-        // get rules list
         $rules = $this->rulesForDisk($disk);
 
         // find the first rule where the paths are equal
@@ -65,7 +64,7 @@ class ACL
      *
      * @return array
      */
-    protected function rulesForDisk($disk)
+    protected function rulesForDisk($disk): array
     {
         return Arr::where($this->rulesList(),
             function ($value) use ($disk) {
@@ -78,7 +77,7 @@ class ACL
      *
      * @return array|mixed
      */
-    protected function rulesList()
+    protected function rulesList(): mixed
     {
         // if cache on
         if ($minutes = $this->configRepository->getAclRulesCache()) {
