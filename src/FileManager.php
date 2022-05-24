@@ -3,16 +3,16 @@
 namespace Alexusmai\LaravelFileManager;
 
 use Alexusmai\LaravelFileManager\Events\Deleted;
+use Alexusmai\LaravelFileManager\Services\ConfigService\ConfigRepository;
+use Alexusmai\LaravelFileManager\Services\TransferService\TransferFactory;
 use Alexusmai\LaravelFileManager\Traits\CheckTrait;
 use Alexusmai\LaravelFileManager\Traits\ContentTrait;
 use Alexusmai\LaravelFileManager\Traits\PathTrait;
-use Alexusmai\LaravelFileManager\Services\TransferService\TransferFactory;
-use Alexusmai\LaravelFileManager\Services\ConfigService\ConfigRepository;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Http\Response;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use Illuminate\Support\Arr;
 use Intervention\Image\Facades\Image;
 use League\Flysystem\FilesystemException;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -29,7 +29,7 @@ class FileManager
     /**
      * FileManager constructor.
      *
-     * @param  ConfigRepository  $configRepository
+     * @param ConfigRepository $configRepository
      */
     public function __construct(ConfigRepository $configRepository)
     {
@@ -47,7 +47,7 @@ class FileManager
             return [
                 'result' => [
                     'status'  => 'danger',
-                    'message' => 'noConfig'
+                    'message' => 'noConfig',
                 ],
             ];
         }
@@ -131,10 +131,10 @@ class FileManager
     /**
      * Upload files
      *
-     * @param $disk
-     * @param $path
-     * @param $files
-     * @param $overwrite
+     * @param string|null $disk
+     * @param string|null $path
+     * @param array|null  $files
+     * @param bool        $overwrite
      *
      * @return array
      */
@@ -144,7 +144,7 @@ class FileManager
 
         foreach ($files as $file) {
             // skip or overwrite files
-            if (!$overwrite && Storage::disk($disk)->exists($path.'/'.$file->getClientOriginalName())) {
+            if (!$overwrite && Storage::disk($disk)->exists($path . '/' . $file->getClientOriginalName())) {
                 continue;
             }
 
@@ -167,11 +167,21 @@ class FileManager
                 continue;
             }
 
+            $name = $file->getClientOriginalName();
+            if ($this->configRepository->getSlugifyNames()) {
+                $name = Str::slug(
+                        Str::replace(
+                            '.' . $file->getClientOriginalExtension(),
+                            '',
+                            $name
+                        )
+                    ) . '.' . $file->getClientOriginalExtension();
+            }
             // overwrite or save file
             Storage::disk($disk)->putFileAs(
                 $path,
                 $file,
-                $file->getClientOriginalName()
+                $name
             );
         }
 
@@ -385,7 +395,7 @@ class FileManager
         );
 
         // add directory properties for the tree module
-        $tree = $directoryProperties;
+        $tree          = $directoryProperties;
         $tree['props'] = ['hasSubdirectories' => false];
 
         return [
@@ -449,7 +459,7 @@ class FileManager
             $file->getClientOriginalName()
         );
 
-        $filePath = $this->newPath($path, $file->getClientOriginalName());
+        $filePath       = $this->newPath($path, $file->getClientOriginalName());
         $fileProperties = $this->fileProperties($disk, $filePath);
 
         return [

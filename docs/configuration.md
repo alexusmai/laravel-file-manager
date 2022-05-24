@@ -111,6 +111,10 @@ leftDisk and leftPath is default for the file manager windows configuration - 1,
 'diskList'  => ['images', 'public'],
 ```
 
+## Normalization of uploaded file names
+
+If you expect to work with files that may have filenames that are not considered *normal* `f.e.: "DCIM_2021  - čšč& (1).jpg.jpg"` so basically any time you give the option to upload files to users, you can set `slugifyNames` to `true` and have the names ran through `Str::slug()` before saving it so you file will look something like `dcim-2021-csc-1.jpg` 
+
 ## Dynamic configuration
 
 You can create your own configuration, for example for different users or their roles.
