@@ -160,4 +160,13 @@ interface ConfigRepository
      * @return int|null
      */
     public function getAclRulesCache(): ?int;
+
+    /**
+     * Whether to slugify filenames
+     *
+     * boolean
+     *
+     * @return bool|null
+     */
+    public function getSlugifyNames(): ?bool;
 }
