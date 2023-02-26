@@ -20,10 +20,10 @@
         "php": "^8.0",
         "ext-zip": "*",
         "ext-json": "*",
-        "laravel/framework": "^9.0",
+        "laravel/framework": "^9.0|^10.0",
         "league/flysystem": "^3.0",
         "intervention/image": "^2.7",
-        "intervention/imagecache": "^2.5"
+        "intervention/imagecache": "^2.6"
     },
     "autoload": {
         "psr-4": {
