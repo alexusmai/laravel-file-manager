@@ -8,8 +8,6 @@
 
 ![Laravel File Manager](https://raw.github.com/alexusmai/vue-laravel-file-manager/master/src/assets/laravel-file-manager.gif?raw=true)
 
-**DEMO:** [Laravel File Manager](http://file-manager.webmai.ru/)
-
 **Vue.js Frontend:** [alexusmai/vue-laravel-file-manager](https://github.com/alexusmai/vue-laravel-file-manager)
 
 ## Documentation
@@ -68,7 +66,7 @@
 
 ## In a new version 3
 
-- **Version 3 only works with Laravel 9!**
+- **Version 3 only works with Laravel 9 and 10!**
 - Vue.js 3
 - Bootstrap 5
 - Bootstrap Icons
