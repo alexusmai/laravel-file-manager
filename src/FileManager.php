@@ -273,6 +273,23 @@ class FileManager
      */
     public function rename($disk, $newName, $oldName): array
     {
+        $extension = explode('.', $newName);
+        $extension = end($extension);
+        if (
+            $this->configRepository->getAllowFileTypes()
+            && !in_array(
+                $extension,
+                $this->configRepository->getAllowFileTypes()
+            )
+        ) {
+            return [
+                'result' => [
+                    'status' => 'warning',
+                    'message' => 'notAllUploaded',
+                ],
+            ];
+        }
+
         Storage::disk($disk)->move($oldName, $newName);
 
         return [
