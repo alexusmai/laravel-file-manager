@@ -48,8 +48,8 @@ Open the view file where you want to place the application block, and add:
   then you do not need to connect any styles. Otherwise, add -
 
 ```
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.2/font/bootstrap-icons.min.css">
 ```
 
 * For old versions - the frontend package uses **Bootstrap 4** and **Font Awesome 5** styles, if you already use it,
