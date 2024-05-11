@@ -13,7 +13,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use Intervention\Image\Facades\Image;
+use Intervention\Image\Laravel\Facades\Image;
 use League\Flysystem\FilesystemException;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -314,22 +314,14 @@ class FileManager
      */
     public function thumbnails($disk, $path): mixed
     {
-        if ($this->configRepository->getCache()) {
-            $thumbnail = Image::cache(function ($image) use ($disk, $path) {
-                $image->make(Storage::disk($disk)->get($path))->fit(80);
-            }, $this->configRepository->getCache());
-
-            // output
-            return response()->make(
-                $thumbnail,
-                200,
-                ['Content-Type' => Storage::disk($disk)->mimeType($path)]
-            );
-        }
-
-        $thumbnail = Image::make(Storage::disk($disk)->get($path))->fit(80);
-
-        return $thumbnail->response();
+        return response()->make(
+            Image::read(
+                Storage::disk($disk)->get($path))
+                ->coverDown(80, 80)
+                ->encode(),
+            200,
+            ['Content-Type' => Storage::disk($disk)->mimeType($path)]
+        );
     }
 
     /**
@@ -339,12 +331,15 @@ class FileManager
      * @param $path
      *
      * @return mixed
+     * @throws BindingResolutionException
      */
     public function preview($disk, $path): mixed
     {
-        $preview = Image::make(Storage::disk($disk)->get($path));
-
-        return $preview->response();
+        return response()->make(
+            Image::read(Storage::disk($disk)->get($path))->encode(),
+            200,
+            ['Content-Type' => Storage::disk($disk)->mimeType($path)]
+        );
     }
 
     /**

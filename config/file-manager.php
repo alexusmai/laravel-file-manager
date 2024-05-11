@@ -62,14 +62,6 @@ return [
     'rightPath'         => null,
 
     /**
-     * Image cache ( Intervention Image Cache )
-     *
-     * set null, 0 - if you don't need cache (default)
-     * if you want use cache - set the number of minutes for which the value should be cached
-     */
-    'cache'             => null,
-
-    /**
      * File manager modules configuration
      *
      * 1 - only one file manager window

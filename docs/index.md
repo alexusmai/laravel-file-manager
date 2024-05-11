@@ -10,9 +10,8 @@
 * [Update](./update.md)
 
 ## Requirements
- * PHP >= 8.0
+ * PHP >= 8.1
  * ext-zip - for zip and unzip functions
  * Laravel 9 or higher
- * GD Library or Imagick for [intervention/image](https://github.com/Intervention/image)
- * requires [intervention/image](https://github.com/Intervention/image) and [intervention/imagecache](https://github.com/Intervention/imagecache)
+ * GD Library or Imagick for [intervention/image-laravel](https://github.com/Intervention/image-laravel)
  * Bootstrap 5 and Bootstrap Icons v1.8.0 and higher
