@@ -11,6 +11,7 @@ use Alexusmai\LaravelFileManager\Events\Download;
 use Alexusmai\LaravelFileManager\Events\FileCreated;
 use Alexusmai\LaravelFileManager\Events\FileCreating;
 use Alexusmai\LaravelFileManager\Events\FilesUploaded;
+use Alexusmai\LaravelFileManager\Events\FilesUploadFailed;
 use Alexusmai\LaravelFileManager\Events\FilesUploading;
 use Alexusmai\LaravelFileManager\Events\FileUpdate;
 use Alexusmai\LaravelFileManager\Events\Paste;
@@ -132,8 +133,13 @@ class FileManagerController extends Controller
             $request->file('files'),
             $request->input('overwrite')
         );
+        $status = $uploadResponse['result']['status'];
 
-        event(new FilesUploaded($request));
+        if ($status === "success")
+            event(new FilesUploaded($request));
+        else
+            event(new FilesUploadFailed($request,$uploadResponse['result']['message']));
+
 
         return response()->json($uploadResponse);
     }
