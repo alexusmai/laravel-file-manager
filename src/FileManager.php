@@ -167,15 +167,37 @@ class FileManager
                 continue;
             }
 
+            // check file disallow type
+            if ($this->configRepository->getDisallowFileTypes()
+                && in_array(
+                    $file->getClientOriginalExtension(),
+                    $this->configRepository->getDisallowFileTypes()
+                )
+            ) {
+                $fileNotUploaded = true;
+                continue;
+            }
+
+            // check file mime type
+            if ($this->configRepository->getDisallowFileMimeTypes()
+                && in_array(
+                    $file->getMimeType(),
+                    $this->configRepository->getDisallowFileMimeTypes()
+                )
+            ) {
+                $fileNotUploaded = true;
+                continue;
+            }
+
             $name = $file->getClientOriginalName();
             if ($this->configRepository->getSlugifyNames()) {
                 $name = Str::slug(
-                        Str::replace(
-                            '.' . $file->getClientOriginalExtension(),
-                            '',
-                            $name
-                        )
-                    ) . '.' . $file->getClientOriginalExtension();
+                    Str::replace(
+                        '.' . $file->getClientOriginalExtension(),
+                        '',
+                        $name
+                    )
+                ) . '.' . $file->getClientOriginalExtension();
             }
             // overwrite or save file
             Storage::disk($disk)->putFileAs(
@@ -273,7 +295,7 @@ class FileManager
      */
     public function rename($disk, $newName, $oldName): array
     {
-        if(!$this->AllowTypes($newName)){
+        if (!$this->AllowTypeFileName($newName) || !$this->DisallowTypeFileName($newName)) {
             return [
                 'result' => [
                     'status'  => 'error',
@@ -423,7 +445,7 @@ class FileManager
      */
     public function createFile($disk, $path, $name): array
     {
-        if(!$this->AllowTypes($name)){
+        if (!$this->AllowTypeFileName($name) || !$this->DisallowTypeFileName($name)) {
             return [
                 'result' => [
                     'status'  => 'error',
@@ -504,7 +526,7 @@ class FileManager
         return Storage::disk($disk)->response($path, $filename, ['Accept-Ranges' => 'bytes']);
     }
 
-    private function AllowTypes($name)
+    private function AllowTypeFileName($name)
     {
         $ext = explode('.', $name);
         $ext = end($ext);
@@ -514,6 +536,24 @@ class FileManager
             && !in_array(
                 $ext,
                 $this->configRepository->getAllowFileTypes()
+            )
+        ) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    private function DisallowTypeFileName($name)
+    {
+        $ext = explode('.', $name);
+        $ext = end($ext);
+
+        if (
+            $this->configRepository->getDisallowFileTypes()
+            && in_array(
+                $ext,
+                $this->configRepository->getDisallowFileTypes()
             )
         ) {
             return false;
