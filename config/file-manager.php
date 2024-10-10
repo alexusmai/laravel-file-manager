@@ -87,33 +87,48 @@ return [
     /**
      * File upload - disallow these executable file types
      *
-     * [] - default disallowed file types
-     * default: php, php3, php4, php5, phtml, js, html, htm, xhtml, shtml, jhtml, pl, py, cgi, exe
+     * [] - no restrictions
      */
-    'disallowFileTypes'    => [],
+    'disallowFileTypes'    => [
+        'php',
+        'php3',
+        'php4',
+        'php5',
+        'phtml',
+        'js',
+        'html',
+        'htm',
+        'xhtml',
+        'shtml',
+        'jhtml',
+        'pl',
+        'py',
+        'cgi',
+        'exe',
+    ],
 
     /**
      * File upload - disallow these executable file mimetypes
      *
-     * [] - default disallowed mimetypes
-     * default:
-     * - text/x-php
-     * - text/html
-     * - text/javascript
-     * - application/x-javascript
-     * - text/x-javascript
-     * - application/javascript
-     * - application/x-sh
-     * - text/x-python
-     * - application/x-python
-     * - text/x-perl
-     * - application/x-perl
-     * - application/x-httpd-cgi
-     * - application/x-executable
-     * - application/x-msdownload
-     * - application/octet-stream
+     * [] - no restrictions
      */
-    'disallowFileMimeTypes'    => [],
+    'disallowFileMimeTypes'    => [
+        'text/x-php',
+        'text/html',
+        'text/javascript',
+        'application/x-javascript',
+        'text/x-javascript',
+        'application/javascript',
+        'application/x-sh',
+        'text/x-python',
+        'application/x-python',
+        'text/x-perl',
+        'application/x-perl',
+        'application/x-httpd-cgi',
+        'application/x-executable',
+        'application/x-msdownload',
+        'application/octet-stream',
+    ],
 
     /**
      * Show / Hide system files and folders
