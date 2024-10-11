@@ -488,6 +488,15 @@ class FileManager
      */
     public function updateFile($disk, $path, $file): array
     {
+        if (!$this->AllowTypeFileName($file->getClientOriginalName()) || !$this->DisallowTypeFileName($file->getClientOriginalName())) {
+            return [
+                'result' => [
+                    'status'  => 'error',
+                    'message' => "Failed to create file because extension is not allowed",
+                ],
+            ];
+        }
+
         Storage::disk($disk)->putFileAs(
             $path,
             $file,
