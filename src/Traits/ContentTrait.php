@@ -5,6 +5,7 @@ namespace Alexusmai\LaravelFileManager\Traits;
 use Alexusmai\LaravelFileManager\Services\ACLService\ACL;
 use Illuminate\Support\Facades\Storage;
 use League\Flysystem\AwsS3V3\AwsS3V3Adapter;
+use League\Flysystem\Ftp\FtpAdapter;
 use League\Flysystem\FilesystemException;
 
 trait ContentTrait
@@ -129,13 +130,24 @@ trait ContentTrait
 
         $pathInfo = pathinfo($path);
 
+        if (
+            $adapter instanceof AwsS3V3Adapter ||
+            $adapter instanceof FtpAdapter
+        ){
+            $timestamp = null;
+            $visibility = null;
+        } else {
+            $timestamp = Storage::disk($disk)->lastModified($path);
+            $visibility = Storage::disk($disk)->getVisibility($path);
+        }
+
         $properties = [
             'type'       => 'dir',
             'path'       => $path,
             'basename'   => $pathInfo['basename'],
             'dirname'    => $pathInfo['dirname'] === '.' ? '' : $pathInfo['dirname'],
-            'timestamp'  => $adapter instanceof AwsS3V3Adapter ? null : Storage::disk($disk)->lastModified($path),
-            'visibility' => $adapter instanceof AwsS3V3Adapter ? null : Storage::disk($disk)->getVisibility($path),
+            'timestamp'  => $timestamp,
+            'visibility' => $visibility,
         ];
 
         // if ACL ON
