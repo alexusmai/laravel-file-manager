@@ -89,6 +89,13 @@ return [
      */
     'hiddenFiles'       => true,
 
+    /**
+     * File manager language
+     *
+     * app locale
+     */
+    'lang' => app()->getLocale(),
+
     /***************************************************************************
      * Middleware
      *
