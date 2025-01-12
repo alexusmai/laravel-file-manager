@@ -17,7 +17,7 @@ class FilesUploaded
     private $path;
 
     /**
-     * @var \Illuminate\Http\UploadedFile
+     * @var \Illuminate\Http\UploadedFile[]
      */
     private $files;
 

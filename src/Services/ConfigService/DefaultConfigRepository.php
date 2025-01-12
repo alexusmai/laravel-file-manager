@@ -115,6 +115,58 @@ class DefaultConfigRepository implements ConfigRepository
     }
 
     /**
+     * File upload - disallow these executable file types
+     *
+     * [] - no restrictions
+     */
+    final public function getDisallowFileTypes(): array
+    {
+        return config('file-manager.disallowFileTypes', [
+            'php',
+            'php3',
+            'php4',
+            'php5',
+            'phtml',
+            'js',
+            'html',
+            'htm',
+            'xhtml',
+            'shtml',
+            'jhtml',
+            'pl',
+            'py',
+            'cgi',
+            'exe',
+        ]);
+    }
+
+    /**
+     * File upload - disallow these executable file mimetypes
+     *
+     * [] - no restrictions
+     */
+    final public function getDisallowFileMimeTypes(): array
+    {
+        return config('file-manager.disallowFileMimeTypes', [
+            'text/x-php',
+            'text/html',
+            'text/javascript',
+            'application/x-javascript',
+            'text/x-javascript',
+            'application/javascript',
+            'application/x-sh',
+            'text/x-python',
+            'application/x-python',
+            'text/x-perl',
+            'application/x-perl',
+            'application/x-httpd-cgi',
+            'application/x-executable',
+            'application/x-msdownload',
+            'application/octet-stream',
+        ]);
+    }
+
+    /**
      * Show / Hide system files and folders
      *
      * @return bool
