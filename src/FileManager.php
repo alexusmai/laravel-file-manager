@@ -138,10 +138,8 @@ class FileManager
      *
      * @return array
      */
-    public function upload($disk, $path, $files, $overwrite): array
-    {
-        $fileNotUploaded = false;
-
+    $fileNotUploaded = false;
+        $notUploadedReason = "";
         foreach ($files as $file) {
             // skip or overwrite files
             if (!$overwrite && Storage::disk($disk)->exists($path . '/' . $file->getClientOriginalName())) {
@@ -153,6 +151,7 @@ class FileManager
                 && $file->getSize() / 1024 > $this->configRepository->getMaxUploadFileSize()
             ) {
                 $fileNotUploaded = true;
+                $notUploadedReason = "file is too large";
                 continue;
             }
 
@@ -164,6 +163,7 @@ class FileManager
                 )
             ) {
                 $fileNotUploaded = true;
+                $notUploadedReason = "file type is not allowed";
                 continue;
             }
 
@@ -189,7 +189,7 @@ class FileManager
             return [
                 'result' => [
                     'status'  => 'warning',
-                    'message' => 'notAllUploaded',
+                    'message' => $notUploadedReason,
                 ],
             ];
         }
