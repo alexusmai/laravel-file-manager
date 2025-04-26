@@ -24,7 +24,7 @@
 
 * Frontend on Vue.js - [vue-laravel-file-manager](https://github.com/alexusmai/vue-laravel-file-manager)
 * Work with the file system is organized by the standard means Laravel Flysystem:
-  * Local, FTP, S3, Dropbox ...
+  * Local, (S)FTP, S3, Dropbox ...
   * The ability to work only with the selected disks
 * Several options for displaying the file manager:
   * One-panel view
@@ -66,7 +66,7 @@
 
 ## In a new version 3
 
-- **Version 3 only works with Laravel 9 and 10!**
+- **Version 3 only works with Laravel 9, 10 and 11!**
 - Vue.js 3
 - Bootstrap 5
 - Bootstrap Icons

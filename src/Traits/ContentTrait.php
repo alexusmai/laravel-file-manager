@@ -6,6 +6,7 @@ use Alexusmai\LaravelFileManager\Services\ACLService\ACL;
 use Illuminate\Support\Facades\Storage;
 use League\Flysystem\AwsS3V3\AwsS3V3Adapter;
 use League\Flysystem\Ftp\FtpAdapter;
+use League\Flysystem\PhpseclibV3\SftpAdapter;
 use League\Flysystem\FilesystemException;
 
 trait ContentTrait
@@ -132,7 +133,8 @@ trait ContentTrait
 
         if (
             $adapter instanceof AwsS3V3Adapter ||
-            $adapter instanceof FtpAdapter
+            $adapter instanceof FtpAdapter || 
+            $adapter instanceof SftpAdapter
         ){
             $timestamp = null;
             $visibility = null;
