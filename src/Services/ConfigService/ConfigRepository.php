@@ -88,6 +88,20 @@ interface ConfigRepository
     public function getAllowFileTypes(): array;
 
     /**
+     * File upload - disallow these executable file types
+     *
+     * [] - no restrictions
+     */
+    public function getDisallowFileTypes(): array;
+
+    /**
+     * File upload - disallow these executable file mimetypes
+     *
+     * [] - no restrictions
+     */
+    public function getDisallowFileMimeTypes(): array;
+
+    /**
      * Show / Hide system files and folders
      *
      * @return bool
