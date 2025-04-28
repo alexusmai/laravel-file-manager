@@ -86,6 +86,17 @@ Open the view file where you want to place the application block, and add:
 </div>
 ```
 
+* Add Javascript snippet to autoload UI so you can instantly see it running
+
+```
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+
+    document.getElementById('fm').value = window.open('/file-manager/fm-button', '_self');
+  });
+</script>
+```
+
 ## What's next
 
 [Configuration](./configuration.md)
