@@ -46,27 +46,28 @@ class FileManager
         if (!config()->has('file-manager')) {
             return [
                 'result' => [
-                    'status'  => 'danger',
+                    'status' => 'danger',
                     'message' => 'noConfig',
                 ],
             ];
         }
 
         $config = [
-            'acl'           => $this->configRepository->getAcl(),
-            'leftDisk'      => $this->configRepository->getLeftDisk(),
-            'rightDisk'     => $this->configRepository->getRightDisk(),
-            'leftPath'      => $this->configRepository->getLeftPath(),
-            'rightPath'     => $this->configRepository->getRightPath(),
+            'acl' => $this->configRepository->getAcl(),
+            'leftDisk' => $this->configRepository->getLeftDisk(),
+            'rightDisk' => $this->configRepository->getRightDisk(),
+            'leftPath' => $this->configRepository->getLeftPath(),
+            'rightPath' => $this->configRepository->getRightPath(),
             'windowsConfig' => $this->configRepository->getWindowsConfig(),
-            'hiddenFiles'   => $this->configRepository->getHiddenFiles(),
+            'hiddenFiles' => $this->configRepository->getHiddenFiles(),
         ];
 
         // disk list
         foreach ($this->configRepository->getDiskList() as $disk) {
             if (array_key_exists($disk, config('filesystems.disks'))) {
                 $config['disks'][$disk] = Arr::only(
-                    config('filesystems.disks')[$disk], ['driver']
+                    config('filesystems.disks')[$disk],
+                    ['driver']
                 );
             }
         }
@@ -76,7 +77,7 @@ class FileManager
 
         return [
             'result' => [
-                'status'  => 'success',
+                'status' => 'success',
                 'message' => null,
             ],
             'config' => $config,
@@ -97,12 +98,12 @@ class FileManager
         $content = $this->getContent($disk, $path);
 
         return [
-            'result'      => [
-                'status'  => 'success',
+            'result' => [
+                'status' => 'success',
                 'message' => null,
             ],
             'directories' => $content['directories'],
-            'files'       => $content['files'],
+            'files' => $content['files'],
         ];
     }
 
@@ -120,8 +121,8 @@ class FileManager
         $directories = $this->getDirectoriesTree($disk, $path);
 
         return [
-            'result'      => [
-                'status'  => 'success',
+            'result' => [
+                'status' => 'success',
                 'message' => null,
             ],
             'directories' => $directories,
@@ -149,7 +150,8 @@ class FileManager
             }
 
             // check file size
-            if ($this->configRepository->getMaxUploadFileSize()
+            if (
+                $this->configRepository->getMaxUploadFileSize()
                 && $file->getSize() / 1024 > $this->configRepository->getMaxUploadFileSize()
             ) {
                 $fileNotUploaded = true;
@@ -157,7 +159,8 @@ class FileManager
             }
 
             // check file type
-            if ($this->configRepository->getAllowFileTypes()
+            if (
+                $this->configRepository->getAllowFileTypes()
                 && !in_array(
                     $file->getClientOriginalExtension(),
                     $this->configRepository->getAllowFileTypes()
@@ -170,12 +173,12 @@ class FileManager
             $name = $file->getClientOriginalName();
             if ($this->configRepository->getSlugifyNames()) {
                 $name = Str::slug(
-                        Str::replace(
-                            '.' . $file->getClientOriginalExtension(),
-                            '',
-                            $name
-                        )
-                    ) . '.' . $file->getClientOriginalExtension();
+                    Str::replace(
+                        '.' . $file->getClientOriginalExtension(),
+                        '',
+                        $name
+                    )
+                ) . '.' . $file->getClientOriginalExtension();
             }
             // overwrite or save file
             Storage::disk($disk)->putFileAs(
@@ -188,7 +191,7 @@ class FileManager
         if ($fileNotUploaded) {
             return [
                 'result' => [
-                    'status'  => 'warning',
+                    'status' => 'warning',
                     'message' => 'notAllUploaded',
                 ],
             ];
@@ -196,7 +199,7 @@ class FileManager
 
         return [
             'result' => [
-                'status'  => 'success',
+                'status' => 'success',
                 'message' => 'uploaded',
             ],
         ];
@@ -232,7 +235,7 @@ class FileManager
 
         return [
             'result' => [
-                'status'  => 'success',
+                'status' => 'success',
                 'message' => 'deleted',
             ],
         ];
@@ -273,11 +276,20 @@ class FileManager
      */
     public function rename($disk, $newName, $oldName): array
     {
+        if (!$this->AllowTypes($newName)) {
+            return [
+                'result' => [
+                    'status' => 'error',
+                    'message' => "Failed to rename the file because extension is not allowed",
+                ],
+            ];
+        }
+
         Storage::disk($disk)->move($oldName, $newName);
 
         return [
             'result' => [
-                'status'  => 'success',
+                'status' => 'success',
                 'message' => 'renamed',
             ],
         ];
@@ -354,10 +366,10 @@ class FileManager
     {
         return [
             'result' => [
-                'status'  => 'success',
+                'status' => 'success',
                 'message' => null,
             ],
-            'url'    => Storage::disk($disk)->url($path),
+            'url' => Storage::disk($disk)->url($path),
         ];
     }
 
@@ -377,7 +389,7 @@ class FileManager
         if (Storage::disk($disk)->exists($directoryName)) {
             return [
                 'result' => [
-                    'status'  => 'warning',
+                    'status' => 'warning',
                     'message' => 'dirExist',
                 ],
             ];
@@ -390,16 +402,16 @@ class FileManager
         );
 
         // add directory properties for the tree module
-        $tree          = $directoryProperties;
+        $tree = $directoryProperties;
         $tree['props'] = ['hasSubdirectories' => false];
 
         return [
-            'result'    => [
-                'status'  => 'success',
+            'result' => [
+                'status' => 'success',
                 'message' => 'dirCreated',
             ],
             'directory' => $directoryProperties,
-            'tree'      => [$tree],
+            'tree' => [$tree],
         ];
     }
 
@@ -414,12 +426,22 @@ class FileManager
      */
     public function createFile($disk, $path, $name): array
     {
+        if (!$this->AllowTypes($name)) {
+            return [
+                'result' => [
+                    'status' => 'error',
+                    'message' => "Failed to create file because extension is not allowed",
+                ],
+            ];
+        }
+
+
         $path = $this->newPath($path, $name);
 
         if (Storage::disk($disk)->exists($path)) {
             return [
                 'result' => [
-                    'status'  => 'warning',
+                    'status' => 'warning',
                     'message' => 'fileExist',
                 ],
             ];
@@ -430,10 +452,10 @@ class FileManager
 
         return [
             'result' => [
-                'status'  => 'success',
+                'status' => 'success',
                 'message' => 'fileCreated',
             ],
-            'file'   => $fileProperties,
+            'file' => $fileProperties,
         ];
     }
 
@@ -454,15 +476,15 @@ class FileManager
             $file->getClientOriginalName()
         );
 
-        $filePath       = $this->newPath($path, $file->getClientOriginalName());
+        $filePath = $this->newPath($path, $file->getClientOriginalName());
         $fileProperties = $this->fileProperties($disk, $filePath);
 
         return [
             'result' => [
-                'status'  => 'success',
+                'status' => 'success',
                 'message' => 'fileUpdated',
             ],
-            'file'   => $fileProperties,
+            'file' => $fileProperties,
         ];
     }
 
@@ -484,5 +506,23 @@ class FileManager
         }
 
         return Storage::disk($disk)->response($path, $filename, ['Accept-Ranges' => 'bytes']);
+    }
+
+    private function AllowTypes($name)
+    {
+        $ext = explode('.', $name);
+        $ext = end($ext);
+
+        if (
+            $this->configRepository->getAllowFileTypes()
+            && !in_array(
+                $ext,
+                $this->configRepository->getAllowFileTypes()
+            )
+        ) {
+            return false;
+        } else {
+            return true;
+        }
     }
 }
