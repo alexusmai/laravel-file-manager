@@ -430,4 +430,24 @@ class FileManagerController extends Controller
     {
         return view('file-manager::fmButton');
     }
+
+    /**
+     * Remote upload - upload file from URL
+     *
+     * @param \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function remoteUpload(\Illuminate\Http\Request $request): \Illuminate\Http\JsonResponse
+    {
+        $request->validate([
+            'disk' => 'required|string',
+            'path' => 'nullable|string',
+            'url'  => 'required|url',
+        ]);
+        $disk = $request->input('disk');
+        $path = $request->input('path', '');
+        $url  = $request->input('url');
+        $result = $this->fm->remoteUpload($disk, $path, $url);
+        return response()->json($result);
+    }
 }
