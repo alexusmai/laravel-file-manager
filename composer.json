@@ -15,17 +15,17 @@
             "role": "Developer"
         }
     ],
-    "homepage": "https://github.com/alexusami/laravel-file-manager",
+    "homepage": "https://github.com/alexusmai/laravel-file-manager",
     "license": "MIT",
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "require": {
         "php": "^8.1",
         "ext-zip": "*",
         "ext-json": "*",
         "laravel/framework": "^9.0|^10.0|^11.0|^12.0",
         "league/flysystem": "^3.0",
-        "intervention/image-laravel": "^1.2.0",
-        "fruitcake/laravel-cors": "dev-develop"
+        "intervention/image": "^3.0",
+        "fruitcake/laravel-cors": "^2.2"
     },
     "autoload": {
         "psr-4": {
