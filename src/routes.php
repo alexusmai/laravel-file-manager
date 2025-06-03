@@ -76,6 +76,9 @@ Route::group([
     Route::post('unzip', [FileManagerController::class, 'unzip'])
         ->name('fm.unzip');
 
+    Route::post('remote-upload', [FileManagerController::class, 'remoteUpload'])
+        ->name('fm.remote-upload');
+
     // Route::get('properties', 'FileManagerController@properties');
 
     // Integration with editors
