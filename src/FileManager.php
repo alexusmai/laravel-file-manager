@@ -129,40 +129,62 @@ class FileManager
     }
 
     /**
-     * Upload files
+     * Upload files with strict validation:
+     * - Enforce allowFileTypes
+     * - Block disguised PHP payload unless PHP extensions explicitly allowed
+     * - Validate size, MIME, and magic bytes for common types
      *
      * @param string|null $disk
      * @param string|null $path
      * @param array|null  $files
      * @param bool        $overwrite
-     *
      * @return array
      */
     public function upload($disk, $path, $files, $overwrite): array
     {
         $fileNotUploaded = false;
 
-        foreach ($files as $file) {
-            // skip or overwrite files
-            if (!$overwrite && Storage::disk($disk)->exists($path . '/' . $file->getClientOriginalName())) {
-                continue;
-            }
+        $allowed = $this->configRepository->getAllowFileTypes();
+        $allowed = is_array($allowed) ? array_map('strtolower', $allowed) : [];
+        $phpAllowed = in_array('php', $allowed, true) || in_array('phtml', $allowed, true) || in_array('pht', $allowed, true) || in_array('phar', $allowed, true);
 
-            // check file size
-            if ($this->configRepository->getMaxUploadFileSize()
-                && $file->getSize() / 1024 > $this->configRepository->getMaxUploadFileSize()
-            ) {
+        foreach ((array) $files as $file) {
+            if (!$file || !$file->isValid()) {
                 $fileNotUploaded = true;
                 continue;
             }
 
-            // check file type
-            if ($this->configRepository->getAllowFileTypes()
-                && !in_array(
-                    $file->getClientOriginalExtension(),
-                    $this->configRepository->getAllowFileTypes()
-                )
-            ) {
+            if ($this->configRepository->getMaxUploadFileSize() && $file->getSize() / 1024 > $this->configRepository->getMaxUploadFileSize()) {
+                $fileNotUploaded = true;
+                continue;
+            }
+
+            $ext = strtolower($file->getClientOriginalExtension());
+
+            if (!empty($allowed) && !in_array($ext, $allowed, true)) {
+                $fileNotUploaded = true;
+                continue;
+            }
+
+            $realPath = $file->getRealPath();
+            if (!$realPath || !is_file($realPath)) {
+                $fileNotUploaded = true;
+                continue;
+            }
+
+            if (!$phpAllowed) {
+                $mime = $this->detectMime($realPath);
+                if ($this->looksLikePhpMime($mime)) {
+                    $fileNotUploaded = true;
+                    continue;
+                }
+                if ($this->containsPhpPayload($realPath)) {
+                    $fileNotUploaded = true;
+                    continue;
+                }
+            }
+
+            if (!$this->validateByExtension($realPath, $ext)) {
                 $fileNotUploaded = true;
                 continue;
             }
@@ -175,9 +197,13 @@ class FileManager
                             '',
                             $name
                         )
-                    ) . '.' . $file->getClientOriginalExtension();
+                    ) . '.' . $ext;
             }
-            // overwrite or save file
+
+            if (!$overwrite && Storage::disk($disk)->exists($path . '/' . $name)) {
+                continue;
+            }
+
             Storage::disk($disk)->putFileAs(
                 $path,
                 $file,
@@ -201,6 +227,7 @@ class FileManager
             ],
         ];
     }
+
 
     /**
      * Delete files and folders
@@ -271,17 +298,38 @@ class FileManager
      *
      * @return array
      */
-    public function rename($disk, $newName, $oldName): array
-    {
-        Storage::disk($disk)->move($oldName, $newName);
+    public function rename($disk, $newName, $oldName)
+	{
+		$allowed = $this->configRepository->getAllowFileTypes();
+		$allowed = is_array($allowed) ? array_map('strtolower', $allowed) : [];
 
-        return [
-            'result' => [
-                'status'  => 'success',
-                'message' => 'renamed',
-            ],
-        ];
-    }
+		$oldBase = basename(str_replace('\\','/',$oldName));
+		$oldDir = trim(str_replace('\\','/',dirname($oldName)),'/');
+		$newBase = basename(str_replace('\\','/',$newName));
+
+		$oldExt = strtolower(pathinfo($oldBase, PATHINFO_EXTENSION));
+		$newExt = strtolower(pathinfo($newBase, PATHINFO_EXTENSION));
+
+		if ($this->hasInvalidBaseName($newBase)) {
+			return ['result'=>['status'=>'error','message'=>'invalid_name']];
+		}
+
+		if ($oldExt !== $newExt) {
+			if (!empty($allowed)) {
+				if (!in_array($newExt, $allowed, true)) {
+					return ['result'=>['status'=>'error','message'=>'extension_not_allowed']];
+				}
+			} else {
+				return ['result'=>['status'=>'error','message'=>'changing_extension_forbidden']];
+			}
+		}
+
+		$oldPath = ltrim($oldName,'/');
+		$newPath = ($oldDir ? $oldDir.'/' : '').$newBase;
+
+		Storage::disk($disk)->move($oldPath, $newPath);
+		return ['result'=>['status'=>'success','message'=>'renamed']];
+	}
 
     /**
      * Download selected file
@@ -436,6 +484,24 @@ class FileManager
             'file'   => $fileProperties,
         ];
     }
+	
+	/**
+     * Has Invalid Base Name
+     *
+     * @param $name
+     *
+     * @return false
+     */
+	private function hasInvalidBaseName($name)
+	{
+		if ($name === '' || trim($name) === '') return true;
+		if (preg_match('/\.\./', $name)) return true;
+		if (preg_match('/\.$/', $name)) return true;
+		if (substr_count($name, '.') > 1) return true;
+		if (strpos($name, '/') !== false || strpos($name, '\\') !== false) return true;
+		if (!preg_match('/^[^\.]+\.[A-Za-z0-9]+$/', $name)) return true;
+		return false;
+	}
 
     /**
      * Update file
@@ -484,5 +550,125 @@ class FileManager
         }
 
         return Storage::disk($disk)->response($path, $filename, ['Accept-Ranges' => 'bytes']);
+    }
+	
+	    /**
+     * Detect MIME type via finfo
+     *
+     * @param string $path
+     * @return string
+     */
+    private function detectMime(string $path): string
+    {
+        $f = finfo_open(FILEINFO_MIME_TYPE);
+        $m = $f ? finfo_file($f, $path) : '';
+        if ($f) finfo_close($f);
+        return strtolower($m ?: '');
+    }
+
+    /**
+     * Heuristic check for PHP-like MIME types
+     *
+     * @param string $mime
+     * @return bool
+     */
+    private function looksLikePhpMime(string $mime): bool
+    {
+        $phpMimes = ['text/x-php','application/x-php','application/php','application/x-httpd-php'];
+        foreach ($phpMimes as $pm) {
+            if (stripos($mime, $pm) !== false) return true;
+        }
+        return false;
+    }
+
+    /**
+     * Scan file content for PHP tags in non-PHP uploads
+     *
+     * @param string $path
+     * @return bool
+     */
+    private function containsPhpPayload(string $path): bool
+    {
+        $h = @fopen($path,'rb');
+        if (!$h) return false;
+        $limit = 8388608;
+        $buf = '';
+        while (!feof($h) && $limit > 0) {
+            $chunk = fread($h, min(131072, $limit));
+            if ($chunk === false) break;
+            $buf .= $chunk;
+            if (preg_match('/<\?(php|=)/i', $buf)) {
+                fclose($h);
+                return true;
+            }
+            if (strlen($buf) > 32) $buf = substr($buf, -32);
+            $limit -= strlen($chunk);
+        }
+        fclose($h);
+        return false;
+    }
+
+    /**
+     * Validate magic bytes by extension (images/pdf/zip/rar/text-like)
+     *
+     * @param string $path
+     * @param string $ext
+     * @return bool
+     */
+    private function validateByExtension(string $path, string $ext): bool
+    {
+        $ext = strtolower($ext);
+
+        if (in_array($ext, ['jpg','jpeg','png','gif','webp'], true)) {
+            if (function_exists('exif_imagetype')) {
+                $t = @exif_imagetype($path);
+                if (($ext==='jpg' || $ext==='jpeg') && $t === IMAGETYPE_JPEG) return true;
+                if ($ext==='png' && $t === IMAGETYPE_PNG) return true;
+                if ($ext==='gif' && $t === IMAGETYPE_GIF) return true;
+                if ($ext==='webp' && defined('IMAGETYPE_WEBP') && $t === IMAGETYPE_WEBP) return true;
+                return false;
+            }
+            $h = @fopen($path,'rb'); if(!$h) return false;
+            $head = fread($h, 12); fclose($h);
+            $hex = bin2hex($head);
+            if (($ext==='jpg'||$ext==='jpeg') && substr($hex,0,4)==='ffd8') return true;
+            if ($ext==='png' && substr($hex,0,8)==='89504e47') return true;
+            if ($ext==='gif' && substr($hex,0,6)==='474946') return true;
+            if ($ext==='webp' && substr($hex,0,8)==='52494646') return true;
+            return false;
+        }
+
+        if ($ext==='pdf') {
+            $h = @fopen($path,'rb'); if(!$h) return false;
+            $head = fread($h, 5); fclose($h);
+            if ($head !== '%PDF-') return false;
+            return true;
+        }
+
+        if ($ext==='zip') {
+            $h = @fopen($path,'rb'); if(!$h) return false;
+            $head = fread($h, 4); fclose($h);
+            $hex = bin2hex($head);
+            return in_array($hex, ['504b0304','504b0506','504b0708'], true);
+        }
+
+        if ($ext==='rar') {
+            $h = @fopen($path,'rb'); if(!$h) return false;
+            $head = fread($h, 8);
+            $more = fread($h, 2);
+            fclose($h);
+            $hex = bin2hex($head.$more);
+            if (strpos($hex, '526172211a0700') === 0) return true;
+            if (strpos($hex, '526172211a070100') === 0) return true;
+            return false;
+        }
+
+        if (in_array($ext, ['txt','csv'], true)) {
+            $mime = $this->detectMime($path);
+            if ($this->looksLikePhpMime($mime)) return false;
+            return (stripos($mime, 'text/') === 0) || $mime === 'application/octet-stream';
+        }
+
+        return true;
     }
 }
