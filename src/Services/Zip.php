@@ -41,7 +41,6 @@ class Zip
      */
     public function create(): array
     {
-
         if ($this->createArchive()) {
             return [
                 'result' => [
@@ -83,7 +82,6 @@ class Zip
         ];
     }
 
-
     protected function prefixer($path): string
     {
         return Storage::disk($this->request->input('disk'))->path($path);
@@ -99,14 +97,33 @@ class Zip
         // elements list
         $elements = $this->request->input('elements');
 
+        // Check files for traversal
+        if (isset($elements['files']) && is_array($elements['files'])) {
+            foreach ($elements['files'] as $file) {
+                if (strpos($file, '..') !== false) {
+                    event(new ZipFailed($this->request));
+                    return false;
+                }
+            }
+        }
+
+        // Check directories for traversal
+        if (isset($elements['directories']) && is_array($elements['directories'])) {
+            foreach ($elements['directories'] as $directory) {
+                if (strpos($directory, '..') !== false) {
+                    event(new ZipFailed($this->request));
+                    return false;
+                }
+            }
+        }
+
         // create or overwrite archive
         if ($this->zip->open(
                 $this->createName(),
                 ZIPARCHIVE::OVERWRITE | ZIPARCHIVE::CREATE
             ) === true
         ) {
-            // files processing
-            if ($elements['files']) {
+            if (isset($elements['files']) && $elements['files']) {
                 foreach ($elements['files'] as $file) {
                     $this->zip->addFile(
                         $this->prefixer($file),
@@ -115,8 +132,7 @@ class Zip
                 }
             }
 
-            // directories processing
-            if ($elements['directories']) {
+            if (isset($elements['directories']) && $elements['directories']) {
                 $this->addDirs($elements['directories']);
             }
 
@@ -140,11 +156,15 @@ class Zip
     protected function extractArchive(): bool
     {
         $zipPath = $this->prefixer($this->request->input('path'));
-
         $rootPath = dirname($zipPath);
 
         // extract to new folder
         $folder = $this->request->input('folder');
+
+        if ($folder && (strpos($folder, '..') !== false || strpos($folder, '://') !== false)) {
+            event(new UnzipFailed($this->request));
+            return false;
+        }
 
         if ($this->zip->open($zipPath) === true) {
             $this->zip->extractTo($folder ? $rootPath.'/'.$folder : $rootPath);
