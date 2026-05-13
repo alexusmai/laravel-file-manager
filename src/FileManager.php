@@ -7,6 +7,7 @@ use Alexusmai\LaravelFileManager\Services\ConfigService\ConfigRepository;
 use Alexusmai\LaravelFileManager\Services\TransferService\TransferFactory;
 use Alexusmai\LaravelFileManager\Traits\CheckTrait;
 use Alexusmai\LaravelFileManager\Traits\ContentTrait;
+use Alexusmai\LaravelFileManager\Traits\MoveFolderTrait;
 use Alexusmai\LaravelFileManager\Traits\PathTrait;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Http\Response;
@@ -19,12 +20,15 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class FileManager
 {
-    use PathTrait, ContentTrait, CheckTrait;
+    use PathTrait, ContentTrait, CheckTrait, MoveFolderTrait;
 
     /**
      * @var ConfigRepository
      */
     public ConfigRepository $configRepository;
+
+    /** @var array<string,string> */
+    protected static array $driverCache = [];
 
     /**
      * FileManager constructor.
@@ -34,6 +38,20 @@ class FileManager
     public function __construct(ConfigRepository $configRepository)
     {
         $this->configRepository = $configRepository;
+    }
+
+    /**
+     * Returns TRUE when $disk refers to a local disk.
+     */
+    public static function getDiskDriver(string $disk): string
+    {
+        $guess = config("filesystems.disks.{$disk}.driver");
+
+        return static::$driverCache[$disk] ??= match ($guess) {
+            // When scoped, resolve the linked disk to determine.
+            'scoped' => static::getDiskDriver(config("filesystems.disks.{$disk}.disk")),
+            default => $guess,
+        };
     }
 
     /**
@@ -273,7 +291,14 @@ class FileManager
      */
     public function rename($disk, $newName, $oldName): array
     {
-        Storage::disk($disk)->move($oldName, $newName);
+        $storage = Storage::disk($disk);
+
+        if (static::getDiskDriver($disk) === 's3' && $storage->directoryExists($oldName)) {
+            // On S3 a directory must be copied differently.
+            $this->moveFolder($storage, $oldName, $newName);
+        } else {
+            $storage->move($oldName, $newName);
+        }
 
         return [
             'result' => [
