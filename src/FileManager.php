@@ -485,4 +485,50 @@ class FileManager
 
         return Storage::disk($disk)->response($path, $filename, ['Accept-Ranges' => 'bytes']);
     }
+
+    /**
+     * Remote upload - download file from URL and save to disk
+     *
+     * @param string $disk
+     * @param string $path
+     * @param string $url
+     * @return array
+     */
+    public function remoteUpload($disk, $path, $url): array
+    {
+        try {
+            $fileContents = @file_get_contents($url);
+            if ($fileContents === false) {
+                return [
+                    'result' => [
+                        'status'  => 'danger',
+                        'message' => 'Could not download file from URL',
+                    ],
+                ];
+            }
+            $filename = basename(parse_url($url, PHP_URL_PATH));
+            if (!$filename) {
+                $filename = 'remote_file_' . time();
+            }
+            $fullPath = trim($path ? ($path . '/') : '') . $filename;
+            Storage::disk($disk)->put($fullPath, $fileContents);
+            return [
+                'result' => [
+                    'status'  => 'success',
+                    'message' => 'File uploaded from URL',
+                ],
+                'file' => [
+                    'name' => $filename,
+                    'path' => $fullPath,
+                ],
+            ];
+        } catch (\Exception $e) {
+            return [
+                'result' => [
+                    'status'  => 'danger',
+                    'message' => $e->getMessage(),
+                ],
+            ];
+        }
+    }
 }
