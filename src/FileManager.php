@@ -72,7 +72,7 @@ class FileManager
         }
 
         // get language
-        $config['lang'] = app()->getLocale();
+        $config['lang'] = str_replace('_','-',app()->getLocale());
 
         return [
             'result' => [
