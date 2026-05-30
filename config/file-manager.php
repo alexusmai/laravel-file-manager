@@ -85,6 +85,52 @@ return [
     'allowFileTypes'    => [],
 
     /**
+     * File upload - disallow these executable file types
+     *
+     * [] - no restrictions
+     */
+    'disallowFileTypes'    => [
+        'php',
+        'php3',
+        'php4',
+        'php5',
+        'phtml',
+        'js',
+        'html',
+        'htm',
+        'xhtml',
+        'shtml',
+        'jhtml',
+        'pl',
+        'py',
+        'cgi',
+        'exe',
+    ],
+
+    /**
+     * File upload - disallow these executable file mimetypes
+     *
+     * [] - no restrictions
+     */
+    'disallowFileMimeTypes'    => [
+        'text/x-php',
+        'text/html',
+        'text/javascript',
+        'application/x-javascript',
+        'text/x-javascript',
+        'application/javascript',
+        'application/x-sh',
+        'text/x-python',
+        'application/x-python',
+        'text/x-perl',
+        'application/x-perl',
+        'application/x-httpd-cgi',
+        'application/x-executable',
+        'application/x-msdownload',
+        'application/octet-stream',
+    ],
+
+    /**
      * Show / Hide system files and folders
      */
     'hiddenFiles'       => true,
