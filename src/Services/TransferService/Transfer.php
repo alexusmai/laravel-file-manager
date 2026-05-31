@@ -2,8 +2,13 @@
 
 namespace Alexusmai\LaravelFileManager\Services\TransferService;
 
+use Alexusmai\LaravelFileManager\Traits\FileSecurityTrait;
+use Illuminate\Support\Facades\Storage;
+
 abstract class Transfer
 {
+    use FileSecurityTrait;
+
     public $disk;
     public $path;
     public $clipboard;
@@ -29,6 +34,15 @@ abstract class Transfer
      */
     public function filesTransfer(): array
     {
+        if ($this->containsDangerousFile()) {
+            return [
+                'result' => [
+                    'status'  => 'warning',
+                    'message' => 'dangerousFileType',
+                ],
+            ];
+        }
+
         try {
             // determine the type of operation
             if ($this->clipboard['type'] === 'copy') {
@@ -56,4 +70,23 @@ abstract class Transfer
     abstract protected function copy();
 
     abstract protected function cut();
+
+    protected function containsDangerousFile(): bool
+    {
+        foreach ($this->clipboard['files'] as $file) {
+            if ($this->hasDangerousFilename($file)) {
+                return true;
+            }
+        }
+
+        foreach ($this->clipboard['directories'] as $directory) {
+            foreach (Storage::disk($this->clipboard['disk'])->allFiles($directory) as $file) {
+                if ($this->hasDangerousFilename($file)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
 }

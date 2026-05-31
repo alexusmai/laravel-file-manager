@@ -6,6 +6,7 @@ use Alexusmai\LaravelFileManager\Events\UnzipCreated;
 use Alexusmai\LaravelFileManager\Events\UnzipFailed;
 use Alexusmai\LaravelFileManager\Events\ZipCreated;
 use Alexusmai\LaravelFileManager\Events\ZipFailed;
+use Alexusmai\LaravelFileManager\Traits\FileSecurityTrait;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use RecursiveIteratorIterator;
@@ -14,6 +15,8 @@ use ZipArchive;
 
 class Zip
 {
+    use FileSecurityTrait;
+
     protected $zip;
     protected $request;
     //protected $pathPrefix;
@@ -96,6 +99,18 @@ class Zip
     {
         // elements list
         $elements = $this->request->input('elements');
+        $archiveName = (string) $this->request->input('name');
+
+        if ($this->hasPathTraversal($archiveName)
+            || str_contains($archiveName, '/')
+            || str_contains($archiveName, '\\')
+            || str_contains($archiveName, ':')
+            || $this->hasDangerousFilename($archiveName)
+        ) {
+            event(new ZipFailed($this->request));
+
+            return false;
+        }
 
         // Check files for traversal
         if (isset($elements['files']) && is_array($elements['files'])) {
@@ -161,12 +176,19 @@ class Zip
         // extract to new folder
         $folder = $this->request->input('folder');
 
-        if ($folder && (strpos($folder, '..') !== false || strpos($folder, '://') !== false)) {
+        if ($folder && $this->hasPathTraversal($folder)) {
             event(new UnzipFailed($this->request));
             return false;
         }
 
         if ($this->zip->open($zipPath) === true) {
+            if ($this->containsUnsafeEntry()) {
+                $this->zip->close();
+                event(new UnzipFailed($this->request));
+
+                return false;
+            }
+
             $this->zip->extractTo($folder ? $rootPath.'/'.$folder : $rootPath);
             $this->zip->close();
 
@@ -176,6 +198,26 @@ class Zip
         }
 
         event(new UnzipFailed($this->request));
+
+        return false;
+    }
+
+    protected function containsUnsafeEntry(): bool
+    {
+        for ($index = 0; $index < $this->zip->numFiles; $index++) {
+            $entry = $this->zip->getNameIndex($index);
+
+            if ($entry === false) {
+                return true;
+            }
+
+            $entry = str_replace('\\', '/', $entry);
+            if ($this->hasPathTraversal($entry)
+                || (!str_ends_with($entry, '/') && $this->hasDangerousFilename($entry))
+            ) {
+                return true;
+            }
+        }
 
         return false;
     }

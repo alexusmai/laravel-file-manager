@@ -7,6 +7,7 @@ use Alexusmai\LaravelFileManager\Services\ConfigService\ConfigRepository;
 use Alexusmai\LaravelFileManager\Services\TransferService\TransferFactory;
 use Alexusmai\LaravelFileManager\Traits\CheckTrait;
 use Alexusmai\LaravelFileManager\Traits\ContentTrait;
+use Alexusmai\LaravelFileManager\Traits\FileSecurityTrait;
 use Alexusmai\LaravelFileManager\Traits\PathTrait;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Http\Response;
@@ -19,7 +20,7 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class FileManager
 {
-    use PathTrait, ContentTrait, CheckTrait;
+    use PathTrait, ContentTrait, CheckTrait, FileSecurityTrait;
 
     /**
      * @var ConfigRepository
@@ -148,21 +149,7 @@ class FileManager
                 continue;
             }
 
-            // check file size
-            if ($this->configRepository->getMaxUploadFileSize()
-                && $file->getSize() / 1024 > $this->configRepository->getMaxUploadFileSize()
-            ) {
-                $fileNotUploaded = true;
-                continue;
-            }
-
-            // check file type
-            if ($this->configRepository->getAllowFileTypes()
-                && !in_array(
-                    $file->getClientOriginalExtension(),
-                    $this->configRepository->getAllowFileTypes()
-                )
-            ) {
+            if (!$this->isUploadAllowed($file)) {
                 $fileNotUploaded = true;
                 continue;
             }
@@ -273,6 +260,10 @@ class FileManager
      */
     public function rename($disk, $newName, $oldName): array
     {
+        if ($this->hasDangerousFilename($newName)) {
+            return $this->dangerousFileTypeMessage();
+        }
+
         Storage::disk($disk)->move($oldName, $newName);
 
         return [
@@ -414,6 +405,10 @@ class FileManager
      */
     public function createFile($disk, $path, $name): array
     {
+        if ($this->hasDangerousFilename($name)) {
+            return $this->dangerousFileTypeMessage();
+        }
+
         $path = $this->newPath($path, $name);
 
         if (Storage::disk($disk)->exists($path)) {
@@ -448,6 +443,10 @@ class FileManager
      */
     public function updateFile($disk, $path, $file): array
     {
+        if (!$this->isUploadAllowed($file)) {
+            return $this->fileNotUploadedMessage();
+        }
+
         Storage::disk($disk)->putFileAs(
             $path,
             $file,
@@ -463,6 +462,52 @@ class FileManager
                 'message' => 'fileUpdated',
             ],
             'file'   => $fileProperties,
+        ];
+    }
+
+    protected function isUploadAllowed($file): bool
+    {
+        if ($this->hasDangerousFilename($file->getClientOriginalName())
+            || $this->hasDangerousMimeType($file->getMimeType())
+        ) {
+            return false;
+        }
+
+        if ($this->configRepository->getMaxUploadFileSize()
+            && $file->getSize() / 1024 > $this->configRepository->getMaxUploadFileSize()
+        ) {
+            return false;
+        }
+
+        $allowedExtensions = array_map(
+            'strtolower',
+            $this->configRepository->getAllowFileTypes()
+        );
+
+        return !$allowedExtensions || in_array(
+            strtolower($file->getClientOriginalExtension()),
+            $allowedExtensions,
+            true
+        );
+    }
+
+    protected function dangerousFileTypeMessage(): array
+    {
+        return [
+            'result' => [
+                'status'  => 'warning',
+                'message' => 'dangerousFileType',
+            ],
+        ];
+    }
+
+    protected function fileNotUploadedMessage(): array
+    {
+        return [
+            'result' => [
+                'status'  => 'warning',
+                'message' => 'notAllUploaded',
+            ],
         ];
     }
 
